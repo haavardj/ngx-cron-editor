@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { CronOptions } from "./cron-editor/CronOptions";
-import { CronGenComponent } from "./cron-editor/cron-editor.component"
+import { CronOptions } from './cron-editor/CronOptions';
+import { CronGenComponent } from './cron-editor/cron-editor.component'
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ export class AppComponent {
     formRadioClass: 'cron-editor-radio',
     formCheckboxClass: 'cron-editor-checkbox',
 
-    defaultTime: "00:00:00",
+    defaultTime: '00:00:00',
 
     hideMinutesTab: false,
     hideHourlyTab: false,
@@ -31,11 +31,11 @@ export class AppComponent {
     use24HourTime: true,
     hideSeconds: false,
 
-    cronFlavor: "standard"
+    cronFlavor: 'standard'
   };
 
-  @ViewChild("cronEditorDemo")
-  cronEditorDemo : CronGenComponent;
+  @ViewChild('cronEditorDemo', { static: false })
+  cronEditorDemo: CronGenComponent;
 
   cronFlavorChange() {
     this.cronEditorDemo.options = this.cronOptions;
