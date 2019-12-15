@@ -34,23 +34,24 @@
     "copycss": "copy 'src/app/cron-editor/*.css' './components/cron-editor/'",
     "pack": "ng-packagr -p package.json & cd dist & npm pack"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "@angular/animations": "^8.2.14",
-    "@angular/common": "^8.2.14",
-    "@angular/compiler": "^8.2.14",
-    "@angular/core": "^8.2.14",
-    "@angular/forms": "^8.2.14",
-    "@angular/http": "^7.2.15",
-    "@angular/platform-browser": "^8.2.14",
-    "@angular/platform-browser-dynamic": "^8.2.14",
-    "@angular/router": "^8.2.14",
+  "dependencies": {
+    "@angular/animations": "~8.2.14",
+    "@angular/common": "~8.2.14",
+    "@angular/compiler": "~8.2.14",
+    "@angular/core": "~8.2.14",
+    "@angular/forms": "~8.2.14",
+    "@angular/platform-browser": "~8.2.14",
+    "@angular/platform-browser-dynamic": "~8.2.14",
+    "@angular/router": "~8.2.14",
     "bootstrap": "4.4.1",
+    "rxjs": "~6.5.3",
+    "tslib": "^1.10.0",
+    "zone.js": "~0.9.1"
+  },
+  "devDependencies": {
     "core-js": "^3.5.0",
     "jquery": "3.4.1",
     "popper.js": "^1.16.0",
-    "rxjs": "^6.5.3",
-    "zone.js": "^0.10.2",
     "@angular-devkit/build-angular": "~0.803.20",
     "@angular-devkit/build-ng-packagr": "~0.803.20",
     "@angular/cli": "~8.3.20",
@@ -72,7 +73,8 @@
     "protractor": "~5.4.2",
     "ts-node": "~8.5.4",
     "tslint": "~5.20.1",
-    "typescript": "~3.7.3"
+    "eslint": "^6.7.2",
+    "typescript": "~3.5.3"
   },
   "peerDependencies": {},
   "ngPackage": {
