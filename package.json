@@ -38,12 +38,10 @@
     "@angular/animations": "~8.2.14",
     "@angular/common": "~8.2.14",
     "@angular/compiler": "~8.2.14",
-    "@angular/core": "~8.2.14",
     "@angular/forms": "~8.2.14",
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
-    "bootstrap": "4.4.1",
     "rxjs": "~6.5.3",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
@@ -76,7 +74,10 @@
     "eslint": "^6.7.2",
     "typescript": "~3.5.3"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "@angular/core": "~8.2.14",
+    "bootstrap": "4.4.1"
+  },
   "ngPackage": {
     "lib": {
       "entryFile": "src/app/cron-editor/cron-editor.module.ts"
