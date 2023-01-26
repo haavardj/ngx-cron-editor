@@ -79,6 +79,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
    * The cron output value is updated whenever a form is updated. To make it change in response to tab selection, we simply reset
    * the value of the form that goes into focus. */
   public onTabFocus(idx: number) {
+    // The bug is here as the idx changes when tabs are 'hidden'. E.g. when the minutes are hidden, then the hour tab has index 0
     switch (idx) {
       case 0:
         this.minutesForm.setValue(this.minutesForm.value);
