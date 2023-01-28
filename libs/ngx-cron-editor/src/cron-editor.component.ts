@@ -1,8 +1,9 @@
-import { Component, Input, Output, OnInit, EventEmitter, forwardRef } from '@angular/core';
+import {Component, Input, Output, OnInit, EventEmitter, forwardRef, ViewChild} from '@angular/core';
 import { CronOptions } from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import { ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
+import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
 
 
 export const CRON_VALUE_ACCESSOR: any = {
@@ -36,12 +37,32 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   cronForm: FormControl;
 
   minutesForm: FormGroup;
+  @ViewChild('minutesTab')
+  minutesTab: MatTab;
+
   hourlyForm: FormGroup;
+  @ViewChild('hourlyTab')
+  hourlyTab: MatTab;
+
   dailyForm: FormGroup;
+  @ViewChild('dailyTab')
+  dailyTab: MatTab;
+
   weeklyForm: FormGroup;
+  @ViewChild('weeklyTab')
+  weeklyTab: MatTab;
+
   monthlyForm: FormGroup;
+  @ViewChild('monthlyTab')
+  monthlyTab: MatTab;
+
   yearlyForm: FormGroup;
+  @ViewChild('yearlyTab')
+  yearlyTab: MatTab;
+
   advancedForm: FormGroup;
+  @ViewChild('advancedTab')
+  advancedTab: MatTab;
 
   @Input()
   get cron(): string {
@@ -77,33 +98,28 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
 
   /* Update the cron output to that of the selected tab.
    * The cron output value is updated whenever a form is updated. To make it change in response to tab selection, we simply reset
-   * the value of the form that goes into focus. */
-  public onTabFocus(idx: number) {
-    // The bug is here as the idx changes when tabs are 'hidden'. E.g. when the minutes are hidden, then the hour tab has index 0
-    switch (idx) {
-      case 0:
-        this.minutesForm.setValue(this.minutesForm.value);
-        break;
-      case 1:
-        this.hourlyForm.setValue(this.hourlyForm.value);
-        break;
-      case 2:
-        this.dailyForm.setValue(this.dailyForm.value);
-        break;
-      case 3:
-        this.weeklyForm.setValue(this.weeklyForm.value);
-        break;
-      case 4:
-        this.monthlyForm.setValue(this.monthlyForm.value);
-        break;
-      case 5:
-        this.yearlyForm.setValue(this.yearlyForm.value);
-        break;
-      case 6:
-        this.advancedForm.setValue(this.advancedForm.value);
-        break;
-      default:
-        throw(new Error('Invalid tab selected'));
+   * the value of the form that goes into focus.
+   * We cannot rely on the index of the tab, as the hide options could hide tabs and
+   * then the index dynamically changes based on the hidden tab.*/
+  onTabChange(tabChangeEvent: MatTabChangeEvent) {
+    const currentTab = tabChangeEvent.tab;
+
+    if (currentTab === this.minutesTab) {
+      this.minutesForm.setValue(this.minutesForm.value);
+    } else if (currentTab === this.hourlyTab) {
+      this.hourlyForm.setValue(this.hourlyForm.value);
+    } else if (currentTab === this.dailyTab) {
+      this.dailyForm.setValue(this.dailyForm.value);
+    } else if (currentTab === this.weeklyTab) {
+      this.weeklyForm.setValue(this.weeklyForm.value);
+    } else if (currentTab === this.monthlyTab) {
+      this.monthlyForm.setValue(this.monthlyForm.value);
+    } else if (currentTab === this.yearlyTab) {
+      this.yearlyForm.setValue(this.yearlyForm.value);
+    } else if (currentTab === this.advancedTab) {
+      this.advancedForm.setValue(this.advancedForm.value);
+    } else {
+      throw(new Error('Invalid tab selected'));
     }
   }
 
