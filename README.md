@@ -82,7 +82,7 @@ export class MyComponent {
 
 ## History
 
-The ngx-cron-editor is a fork of the vincentjames501's [angular-cron-gen](https://github.com/vincentjames501/angular-cron-gen) for AngularJS 1.5+ and claudiuconstantin's [cron-editor(https://github.com/claudiuconstantin/cron-editor)]. 
+The ngx-cron-editor is a fork of the vincentjames501's [angular-cron-gen](https://github.com/vincentjames501/angular-cron-gen) for AngularJS 1.5+ and claudiuconstantin's [cron-editor](https://github.com/claudiuconstantin/cron-editor). 
 
 **The main additions of this fork is support for Angular 8+ and material design.**
 
