@@ -5,6 +5,31 @@ import { ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACC
 import { ThemePalette } from '@angular/material/core';
 import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
 
+type cronType = 'minutely' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'unknown';
+
+interface ICronModel {
+  type: cronType,
+  months: 0,
+  monthsWeek: '#1',
+  day: 'MON',
+  days: 0,
+  hours: 0,
+  perHour: 0,
+  minutes: 1,
+  perMinute: 0,
+  seconds: 0,
+  hoursType: 'AM',
+  weekdaysOnly: false,
+  MON: true,
+  TUE: true,
+  WED: true,
+  THU: true,
+  FRI: true,
+  SAT: true,
+  SUN: true,
+  expression: ''
+}
+
 
 export const CRON_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -36,7 +61,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
 
   cronForm: FormControl;
 
-  minutesForm: FormGroup;
   @ViewChild('minutesTab')
   minutesTab: MatTab;
 
@@ -64,15 +88,9 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   @ViewChild('advancedTab')
   advancedTab: MatTab;
 
-  @Input()
-  get cron(): string {
-    return this.localCron;
-  }
-  set cron(value: string) {
-    this.localCron = value;
-    this.onChange(this.localCron);
-    this.cronChange.emit(this.localCron);
-  }
+  allForm: FormGroup;
+
+
 
   get isCronFlavorQuartz() {
     return this.options.cronFlavor === 'quartz';
@@ -94,7 +112,33 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     return this.options.cronFlavor === 'quartz' ? '?' : '*';
   }
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {
+
+    const [defaultHours, defaultMinutes, defaultSeconds] = this.options.defaultTime.split(':').map(Number);
+
+    this.allForm = this.fb.group({
+      type: [<cronType> 'unknown'],
+      months: [0],
+      monthsWeek: ['#1'],
+      day: ['1'], // '1' or 'MON;
+      days: [0],
+      hours: [this.getAmPmHour(defaultHours)],
+      hoursPer: [0],
+      minutes: [defaultMinutes],
+      minutesPer: [0],
+      seconds: [defaultSeconds],
+      hoursType: [this.getHourType(defaultHours)],
+      weekdaysOnly: [false],
+      MON: [true],
+      TUE: [true],
+      WED: [true],
+      THU: [true],
+      FRI: [true],
+      SAT: [true],
+      SUN: [true],
+      expression: ['']
+    })
+  }
 
   /* Update the cron output to that of the selected tab.
    * The cron output value is updated whenever a form is updated. To make it change in response to tab selection, we simply reset
@@ -105,19 +149,19 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     const currentTab = tabChangeEvent.tab;
 
     if (currentTab === this.minutesTab) {
-      this.minutesForm.setValue(this.minutesForm.value);
+      this.allForm.setValue({type: <cronType> 'minutely'});
     } else if (currentTab === this.hourlyTab) {
-      this.hourlyForm.setValue(this.hourlyForm.value);
+      this.allForm.setValue({type: <cronType> 'hourly'});
     } else if (currentTab === this.dailyTab) {
-      this.dailyForm.setValue(this.dailyForm.value);
+      this.allForm.setValue({type: <cronType> 'daily'});
     } else if (currentTab === this.weeklyTab) {
-      this.weeklyForm.setValue(this.weeklyForm.value);
+      this.allForm.setValue({type: <cronType> 'weekly'});
     } else if (currentTab === this.monthlyTab) {
-      this.monthlyForm.setValue(this.monthlyForm.value);
+      this.allForm.setValue({type: <cronType> 'monthly'});
     } else if (currentTab === this.yearlyTab) {
-      this.yearlyForm.setValue(this.yearlyForm.value);
+      this.allForm.setValue({type: <cronType> 'yearly'});
     } else if (currentTab === this.advancedTab) {
-      this.advancedForm.setValue(this.advancedForm.value);
+      this.allForm.setValue({type: <cronType> 'unknown'});
     } else {
       throw(new Error('Invalid tab selected'));
     }
@@ -126,174 +170,107 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   public async ngOnInit() {
     this.state = this.getDefaultState();
 
-    this.handleModelChange(this.cron);
-
     const [defaultHours, defaultMinutes, defaultSeconds] = this.options.defaultTime.split(':').map(Number);
 
     this.cronForm = new FormControl('0 0 1/1 * *');
 
-    this.minutesForm = this.fb.group({
-      hours: [0],
-      minutes: [1],
-      seconds: [0]
-    });
-
-    this.minutesForm.valueChanges.subscribe(value => this.computeMinutesCron(value));
-
-    this.hourlyForm = this.fb.group({
-      hours: [1],
-      minutes: [0],
-      seconds: [0]
-    });
-    this.hourlyForm.valueChanges.subscribe(value => this.computeHourlyCron(value));
-
-    this.dailyForm = this.fb.group({
-      subTab: ['everyDays'],
-      everyDays: this.fb.group({
-        days: [1],
-        hours: [this.getAmPmHour(1)],
-        minutes: [0],
-        seconds: [0],
-        hourType: [this.getHourType(0)]
-      }),
-      everyWeekDay: this.fb.group({
-        days: [0],
-        hours: [this.getAmPmHour(1)],
-        minutes: [0],
-        seconds: [0],
-        hourType: [this.getHourType(0)]
-      })
-    });
-    this.dailyForm.valueChanges.subscribe(value => this.computeDailyCron(value));
-
-    this.weeklyForm = this.fb.group({
-      MON: [true],
-      TUE: [false],
-      WED: [false],
-      THU: [false],
-      FRI: [false],
-      SAT: [false],
-      SUN: [false],
-      hours: [this.getAmPmHour(defaultHours)],
-      minutes: [defaultMinutes],
-      seconds: [defaultSeconds],
-      hourType: [this.getHourType(defaultHours)]
-    });
-    this.weeklyForm.valueChanges.subscribe(next => this.computeWeeklyCron(next));
-
-    this.monthlyForm = this.fb.group({
-      subTab: ['specificDay'],
-      specificDay: this.fb.group({
-        day: ['1'],
-        months: [1],
-        hours: [this.getAmPmHour(defaultHours)],
-        minutes: [defaultMinutes],
-        seconds: [defaultSeconds],
-        hourType: [this.getHourType(defaultHours)]
-      }),
-      specificWeekDay: this.fb.group({
-        monthWeek: ['#1'],
-        day: ['MON'],
-        months: [1],
-        hours: [this.getAmPmHour(defaultHours)],
-        minutes: [defaultMinutes],
-        seconds: [defaultSeconds],
-        hourType: [this.getHourType(defaultHours)]
-      })
-    });
-    this.monthlyForm.valueChanges.subscribe(next => this.computeMonthlyCron(next));
-
-    this.yearlyForm = this.fb.group({
-      subTab: ['specificMonthDay'],
-      specificMonthDay: this.fb.group({
-        month: [1],
-        day: ['1'],
-        hours: [this.getAmPmHour(defaultHours)],
-        minutes: [defaultMinutes],
-        seconds: [defaultSeconds],
-        hourType: [this.getHourType(defaultHours)]
-      }),
-      specificMonthWeek: this.fb.group({
-        monthWeek: ['#1'],
-        day: ['MON'],
-        month: [1],
-        hours: [this.getAmPmHour(defaultHours)],
-        minutes: [defaultMinutes],
-        seconds: [defaultSeconds],
-        hourType: [this.getHourType(defaultHours)]
-      })
-    });
-    this.yearlyForm.valueChanges.subscribe(next => this.computeYearlyCron(next));
-
-    this.advancedForm = this.fb.group({
-      expression: [this.isCronFlavorQuartz ? '0 15 10 L-2 * ? *' : '15 10 2 * *']
-    });
-    this.advancedForm.controls.expression.valueChanges.subscribe(next => this.computeAdvancedExpression(next));
+    this.allForm.valueChanges.subscribe(value => this.computeCron(value));
   }
 
-  private computeMinutesCron(state: any) {
-    this.cron = `${this.isCronFlavorQuartz ? state.seconds : ''} 0/${state.minutes} * 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
-    this.cronForm.setValue(this.cron);
+
+  private computeCron(state: any) {
+
+    let cron: string;
+    switch (<cronType> state.type) {
+      case 'minutely':
+        cron = this.computeMinutesCron(state);
+        break;
+      case 'daily':
+        cron = this.computeDailyCron(state);
+        break;
+      case 'hourly':
+        cron = this.computeHourlyCron(state);
+        break;
+      case 'monthly':
+        cron = this.computeHourlyCron(state);
+        break;
+      case 'weekly':
+        cron = this.computeWeeklyCron(state);
+        break;
+      case 'yearly':
+        cron = this.computeYearlyCron(state);
+        break;
+      case 'unknown':
+        cron = this.computeAdvancedExpression(state);
+        break;
+      default:
+        throw Error('Unknown cron type ' + state.type);
+    }
+
+    this.cronForm.setValue(cron);
   }
 
-  private computeHourlyCron(state: any) {
-    this.cron = `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} 0/${state.hours} 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
-    this.cronForm.setValue(this.cron);
+  private computeMinutesCron(state: any): string {
+    // tslint:disable-next-line:max-line-length
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} 0/${state.minutes} * 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
-  private computeDailyCron(state: any) {
+  private computeHourlyCron(state: any): string {
+   return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} 0/${state.hours} 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+  }
+
+  private computeDailyCron(state: any): string {
     switch (state.subTab) {
       case 'everyDays':
-        this.cron = `${this.isCronFlavorQuartz ? state.everyDays.seconds : ''} ${state.everyDays.minutes} ${this.hourToCron(state.everyDays.hours, state.everyDays.hourType)} 1/${state.everyDays.days} * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
-        break;
+        return this.computeEveryDaysCron(state);
       case 'everyWeekDay':
-        this.cron = `${this.isCronFlavorQuartz ? state.everyWeekDay.seconds : ''} ${state.everyWeekDay.minutes} ${this.hourToCron(state.everyWeekDay.hours, state.everyWeekDay.hourType)} ${this.monthDayDefaultChar} * MON-FRI ${this.yearDefaultChar}`.trim();
-        break;
+        return this.computeEveryWeekdayCron(state);
       default:
         throw new Error('Invalid cron daily subtab selection');
     }
-    this.cronForm.setValue(this.cron);
   }
 
-  private computeWeeklyCron(state: any) {
+  private computeEveryDaysCron(state: any): string {
+    return `${this.isCronFlavorQuartz ? state.everyDays.seconds : ''} ${state.everyDays.minutes} ${this.hourToCron(state.everyDays.hours, state.everyDays.hourType)} 1/${state.everyDays.days} * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+
+  }
+
+  private computeEveryWeekdayCron(state: any): string {
+    return `${this.isCronFlavorQuartz ? state.everyWeekDay.seconds : ''} ${state.everyWeekDay.minutes} ${this.hourToCron(state.everyWeekDay.hours, state.everyWeekDay.hourType)} ${this.monthDayDefaultChar} * MON-FRI ${this.yearDefaultChar}`.trim();
+  }
+
+
+  private computeWeeklyCron(state: any): string  {
     const days = this.selectOptions.days
       .reduce((acc, day) => state[day] ? acc.concat([day]) : acc, [])
       .join(',');
-    this.cron = `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hourType)} ${this.monthDayDefaultChar} * ${days} ${this.yearDefaultChar}`.trim();
-    this.cronForm.setValue(this.cron);
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hourType)} ${this.monthDayDefaultChar} * ${days} ${this.yearDefaultChar}`.trim();
   }
 
-  private computeMonthlyCron(state: any) {
+  private computeMonthlyCron(state: any): string {
     switch (state.subTab) {
       case 'specificDay':
-        this.cron = `${this.isCronFlavorQuartz ? state.specificDay.seconds : ''} ${state.specificDay.minutes} ${this.hourToCron(state.specificDay.hours, state.specificDay.hourType)} ${state.specificDay.day} 1/${state.specificDay.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
-        break;
+        return `${this.isCronFlavorQuartz ? state.specificDay.seconds : ''} ${state.specificDay.minutes} ${this.hourToCron(state.specificDay.hours, state.specificDay.hourType)} ${state.specificDay.day} 1/${state.specificDay.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
       case 'specificWeekDay':
-        this.cron = `${this.isCronFlavorQuartz ? state.specificWeekDay.seconds : ''} ${state.specificWeekDay.minutes} ${this.hourToCron(state.specificWeekDay.hours, state.specificWeekDay.hourType)} ${this.monthDayDefaultChar} 1/${state.specificWeekDay.months} ${state.specificWeekDay.day}${state.specificWeekDay.monthWeek} ${this.yearDefaultChar}`.trim();
-        break;
+        return `${this.isCronFlavorQuartz ? state.specificWeekDay.seconds : ''} ${state.specificWeekDay.minutes} ${this.hourToCron(state.specificWeekDay.hours, state.specificWeekDay.hourType)} ${this.monthDayDefaultChar} 1/${state.specificWeekDay.months} ${state.specificWeekDay.day}${state.specificWeekDay.monthWeek} ${this.yearDefaultChar}`.trim();
       default:
         throw new Error('Invalid cron montly subtab selection');
     }
-    this.cronForm.setValue(this.cron);
   }
 
-  private computeYearlyCron(state: any) {
+  private computeYearlyCron(state: any): string {
     switch (state.subTab) {
       case 'specificMonthDay':
-        this.cron = `${this.isCronFlavorQuartz ? state.specificMonthDay.seconds : ''} ${state.specificMonthDay.minutes} ${this.hourToCron(state.specificMonthDay.hours, state.specificMonthDay.hourType)} ${state.specificMonthDay.day} ${state.specificMonthDay.month} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
-        break;
+        return `${this.isCronFlavorQuartz ? state.specificMonthDay.seconds : ''} ${state.specificMonthDay.minutes} ${this.hourToCron(state.specificMonthDay.hours, state.specificMonthDay.hourType)} ${state.specificMonthDay.day} ${state.specificMonthDay.month} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
       case 'specificMonthWeek':
-        this.cron = `${this.isCronFlavorQuartz ? state.specificMonthWeek.seconds : ''} ${state.specificMonthWeek.minutes} ${this.hourToCron(state.specificMonthWeek.hours, state.specificMonthWeek.hourType)} ${this.monthDayDefaultChar} ${state.specificMonthWeek.month} ${state.specificMonthWeek.day}${state.specificMonthWeek.monthWeek} ${this.yearDefaultChar}`.trim();
-        break;
+        return `${this.isCronFlavorQuartz ? state.specificMonthWeek.seconds : ''} ${state.specificMonthWeek.minutes} ${this.hourToCron(state.specificMonthWeek.hours, state.specificMonthWeek.hourType)} ${this.monthDayDefaultChar} ${state.specificMonthWeek.month} ${state.specificMonthWeek.day}${state.specificMonthWeek.monthWeek} ${this.yearDefaultChar}`.trim();
       default:
         throw new Error('Invalid cron yearly subtab selection');
     }
-    this.cronForm.setValue(this.cron);
   }
 
-  private computeAdvancedExpression(expression: any) {
-    this.cron = expression;
-    this.cronForm.setValue(this.cron);
+  private computeAdvancedExpression(state: any) {
+    return state.expression;
   }
 
   public dayDisplay(day: string): string {
@@ -463,7 +440,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     return false;
   }
 
-
   private getDefaultState() {
     const [defaultHours, defaultMinutes, defaultSeconds] = this.options.defaultTime.split(':').map(Number);
     this.localCron = this.isCronFlavorQuartz ? '* 0 0 ? * * *' : '0 0 1/1 * *';
@@ -602,7 +578,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   onTouched = () => { };
 
   writeValue(obj: string): void {
-    this.cron = obj;
+    this.cronForm.setValue(obj);
   }
 
   registerOnChange(fn: any): void {
@@ -616,4 +592,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
+
+
 }

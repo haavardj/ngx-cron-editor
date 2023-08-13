@@ -6,7 +6,7 @@
       <div class="cron-editor-tab-content">
         <span class="cron-form-label">Every </span>
           <cron-time-picker
-            [formGroup]="minutesForm"
+            [formGroup]="allForm"
             [use24HourTime]="options.use24HourTime"
             [hideHours]="true"
             [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz">
@@ -18,7 +18,7 @@
     <mat-tab class="cron-editor-tab" label="Hourly" *ngIf="!options.hideHourlyTab" #hourlyTab>
       <div class="cron-editor-tab-content">
         <span class="cron-form-label">Every </span>
-        <cron-time-picker [formGroup]="hourlyForm"
+        <cron-time-picker [formGroup]="allForm"
                           [use24HourTime]="options.use24HourTime"
                           [hideSeconds]="options.hideSeconds ||  !isCronFlavorQuartz">
         </cron-time-picker>
@@ -27,7 +27,7 @@
 
     <!-- Daily-->
     <mat-tab class="cron-editor-tab" label="Daily" *ngIf="!options.hideDailyTab" #dailyTab>
-      <div class="cron-editor-tab-content" [formGroup]="dailyForm">
+      <div class="cron-editor-tab-content" [formGroup]="allForm">
 
         <mat-radio-group class="cron-editor-radio-group" formControlName="subTab">
           <mat-radio-button name="subTab" class="cron-editor-radio-button" value="everyDays" [ngClass]="state.formRadioClass" checked="checked">
@@ -74,7 +74,7 @@
 
         <span class="cron-form-label">Every </span>
 
-        <div [formGroup]="weeklyForm">
+        <div [formGroup]="allForm">
           <mat-checkbox class="checkbox-margin" formControlName="MON">Monday</mat-checkbox>
           <mat-checkbox class="checkbox-margin" formControlName="TUE">Tuesday</mat-checkbox>
           <mat-checkbox class="checkbox-margin" formControlName="WED">Wednesday</mat-checkbox>
@@ -86,7 +86,7 @@
 
         <span class="cron-form-label">at time </span>
 
-        <cron-time-picker [formGroup]="weeklyForm"
+        <cron-time-picker [formGroup]="allForm"
                           [use24HourTime]="options.use24HourTime"
                           [hideSeconds]="options.hideSeconds|| !isCronFlavorQuartz">
         </cron-time-picker>
@@ -95,7 +95,7 @@
 
     <!-- Monthly-->
     <mat-tab class="cron-editor-tab" label="Monthly" *ngIf="!options.hideMonthlyTab" #monthlyTab>
-      <div class="cron-editor-tab-content" [formGroup]="monthlyForm">
+      <div class="cron-editor-tab-content" [formGroup]="allForm">
         <mat-radio-group class="cron-editor-radio-group" formControlName="subTab">
 
           <mat-radio-button name="monthly-radio" class="cron-editor-radio-button" value="specificDay" [ngClass]="state.formRadioClass">
@@ -141,7 +141,7 @@
 
               at time
 
-              <cron-time-picker [disabled]="disabled" [formGroup]="monthlyForm.controls.specificDay"
+              <cron-time-picker [disabled]="disabled" [formGroup]="allForm.controls.specificDay"
                                 [use24HourTime]="options.use24HourTime"
                                 [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz">
               </cron-time-picker>
@@ -185,7 +185,7 @@
 
               at time
 
-              <cron-time-picker [formGroup]="monthlyForm.controls.specificWeekDay"
+              <cron-time-picker [formGroup]="allForm.controls.specificWeekDay"
                                 [use24HourTime]="options.use24HourTime"
                                 [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz">
               </cron-time-picker>
@@ -236,7 +236,7 @@
             at time
 
             <cron-time-picker [disabled]="disabled"
-                              [formGroup]="yearlyForm.controls.specificMonthDay"
+                              [formGroup]="allForm.controls.specificMonthDay"
                               [use24HourTime]="options.use24HourTime"
                               [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz">
             </cron-time-picker>
@@ -278,7 +278,7 @@
             at time
 
             <cron-time-picker [disabled]="disabled"
-                              [formGroup]="yearlyForm.controls.specificMonthWeek"
+                              [formGroup]="allForm.controls.specificMonthWeek"
                               [use24HourTime]="options.use24HourTime"
                               [hideSeconds]="options.hideSeconds || !isCronFlavorQuartz">
             </cron-time-picker>
