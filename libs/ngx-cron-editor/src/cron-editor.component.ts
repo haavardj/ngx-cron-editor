@@ -44,27 +44,21 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   @ViewChild('minutesTab')
   minutesTab: MatTab;
 
-  hourlyForm: FormGroup;
   @ViewChild('hourlyTab')
   hourlyTab: MatTab;
 
-  dailyForm: FormGroup;
   @ViewChild('dailyTab')
   dailyTab: MatTab;
 
-  weeklyForm: FormGroup;
   @ViewChild('weeklyTab')
   weeklyTab: MatTab;
 
-  monthlyForm: FormGroup;
   @ViewChild('monthlyTab')
   monthlyTab: MatTab;
 
-  yearlyForm: FormGroup;
   @ViewChild('yearlyTab')
   yearlyTab: MatTab;
 
-  advancedForm: FormGroup;
   @ViewChild('advancedTab')
   advancedTab: MatTab;
 
@@ -124,6 +118,9 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   onTabChange(tabChangeEvent: MatTabChangeEvent) {
     const currentTab = tabChangeEvent.tab;
     let x: CronType;
+
+    console.log('on tab change');
+
     switch (currentTab) {
       case this.minutesTab:
         x = 'minutely';
@@ -148,9 +145,9 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
         break;
       default:
         throw (new Error('Invalid tab selected'));
-
-        this.allForm.value.cronType = x;
     }
+
+    this.allForm.controls.cronType.setValue(x);
   }
 
   public async ngOnInit() {
@@ -186,6 +183,9 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
       default:
         throw Error('Unknown cron type ' + this.allForm.value.cronType);
     }
+
+    console.log(cron);
+    console.log(this.allForm.value.cronType);
 
     this.cronForm.setValue(cron);
   }
