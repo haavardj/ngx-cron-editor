@@ -2,7 +2,7 @@
   <mat-tab-group class="cron-editor-container" (selectedTabChange)="onTabChange($event)" [backgroundColor]="backgroundColor" [color]="color">
 
     <!-- Minute -->
-    <mat-tab class="cron-editor-tab" label="Minutes" *ngIf="!options.hideMinutesTab" #minutesTab>
+    <mat-tab class="cron-editor-tab" label="Minutely" *ngIf="!options.hideMinutesTab" #minutesTab>
       <div class="cron-editor-tab-content">
         <span class="cron-form-label">Every </span>
           <cron-time-picker
