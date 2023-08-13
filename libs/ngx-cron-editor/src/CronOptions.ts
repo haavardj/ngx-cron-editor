@@ -1,3 +1,5 @@
+export type CronFlavor = 'standard' | 'quartz';
+
 export interface CronOptions {
     formInputClass?: string;
     formSelectClass?: string;
@@ -19,5 +21,21 @@ export interface CronOptions {
     use24HourTime: boolean;
     hideSeconds: boolean;
 
-    cronFlavor: string;
+    cronFlavor: CronFlavor;
+}
+
+export class DefaultOptions implements  CronOptions {
+  cronFlavor: CronFlavor = 'standard';
+  defaultTime = '00:00:00';
+  hideAdvancedTab = false;
+  hideDailyTab = false;
+  hideHourlyTab = false;
+  hideMinutesTab = false;
+  hideMonthlyTab = false;
+  hideSeconds = false;
+  hideSpecificMonthWeekTab = false;
+  hideSpecificWeekDayTab = false;
+  hideWeeklyTab = false;
+  hideYearlyTab = false;
+  use24HourTime = true;
 }
