@@ -1,16 +1,12 @@
 import {Component, Input, Output, OnInit, EventEmitter, forwardRef, ViewChild} from '@angular/core';
 import {CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
-import {ControlValueAccessor, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {ControlValueAccessor, FormBuilder, FormControl, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
 import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
-import {parse} from 'jasmine-spec-reporter/built/configuration-parser';
-import {debounceTime, throttleTime} from 'rxjs';
+import {debounceTime} from 'rxjs';
 
 type CronType = 'minutely' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'unknown';
-
-type numberOrAny = number | '*';
-type cronAny = '*';
 
 const minutesExp = /\d+ 0\/\d+ \* 1\/1 \* [\?\*] \*/;
 const hourlyExp = /\d+ \d+ 0\/\d+ 1\/1 \* [\?\*] \*/;
@@ -191,8 +187,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
 
   private computeCron() {
 
-    console.log('ComputeCron');
-
     let cron: string;
     switch (this.allForm.value.cronType) {
       case 'minutely':
@@ -220,12 +214,10 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
         throw Error('Unknown cron type ' + this.allForm.value.cronType);
     }
 
-
-    console.log(cron);
-
     this.allForm.controls.expression.setValue(cron, {emitEvent: false});
     this.cronForm.setValue(cron);
     this.cronChange.emit(cron);
+    this.onChange(cron);
   }
 
   private computeMinutesCron(): string {
@@ -441,7 +433,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     // Year
     // Not supported
 
-
     if (cron.match(minutesExp)) {
       this.allForm.controls.cronType.setValue('minutely');
 
@@ -492,93 +483,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     return false;
   }
 
-  private getDefaultState() {
-    const [defaultHours, defaultMinutes, defaultSeconds] = this.options.defaultTime.split(':').map(Number);
-    this.localCron = this.isCronFlavorQuartz ? '* 0 0 ? * * *' : '0 0 1/1 * *';
-    return {
-      minutes: {
-        minutes: 1,
-        seconds: 0
-      },
-      hourly: {
-        hours: 1,
-        minutes: 0,
-        seconds: 0
-      },
-      daily: {
-        subTab: 'everyDays',
-        everyDays: {
-          days: 1,
-          hours: this.getAmPmHour(defaultHours),
-          minutes: defaultMinutes,
-          seconds: defaultSeconds,
-          hourType: this.getHourType(defaultHours)
-        },
-        everyWeekDay: {
-          hours: this.getAmPmHour(defaultHours),
-          minutes: defaultMinutes,
-          seconds: defaultSeconds,
-          hourType: this.getHourType(defaultHours)
-        }
-      },
-      weekly: {
-        MON: true,
-        TUE: false,
-        WED: false,
-        THU: false,
-        FRI: false,
-        SAT: false,
-        SUN: false,
-        hours: this.getAmPmHour(defaultHours),
-        minutes: defaultMinutes,
-        seconds: defaultSeconds,
-        hourType: this.getHourType(defaultHours)
-      },
-      monthly: {
-        subTab: 'specificDay',
-        specificDay: {
-          day: '1',
-          months: 1,
-          hours: this.getAmPmHour(defaultHours),
-          minutes: defaultMinutes,
-          seconds: defaultSeconds,
-          hourType: this.getHourType(defaultHours)
-        },
-        specificWeekDay: {
-          monthWeek: '#1',
-          day: 'MON',
-          months: 1,
-          hours: this.getAmPmHour(defaultHours),
-          minutes: defaultMinutes,
-          seconds: defaultSeconds,
-          hourType: this.getHourType(defaultHours)
-        }
-      },
-      yearly: {
-        subTab: 'specificMonthDay',
-        specificMonthDay: {
-          month: 1,
-          day: '1',
-          hours: this.getAmPmHour(defaultHours),
-          minutes: defaultMinutes,
-          seconds: defaultSeconds,
-          hourType: this.getHourType(defaultHours)
-        },
-        specificMonthWeek: {
-          monthWeek: '#1',
-          day: 'MON',
-          month: 1,
-          hours: this.getAmPmHour(defaultHours),
-          minutes: defaultMinutes,
-          seconds: defaultSeconds,
-          hourType: this.getHourType(defaultHours)
-        }
-      },
-      advanced: {
-        expression: this.isCronFlavorQuartz ? '0 15 10 L-2 * ? *' : '15 10 2 * *'
-      }
-    };
-  }
 
   private getOrdinalSuffix(value: string) {
     if (value.length > 1) {
