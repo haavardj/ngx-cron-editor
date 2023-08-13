@@ -38,13 +38,10 @@ export class AppComponent implements OnInit {
   @ViewChild('cronEditorDemo')
   cronEditorDemo: CronGenComponent;
 
-  cronForm: FormControl;
-
+  cronForm = new FormControl(this.cronExpression);
   constructor() {}
 
-  ngOnInit(): void {
-    this.cronForm = new FormControl(this.cronExpression);
-  }
+  ngOnInit(): void {}
 
   cronFlavorChange() {
     this.cronEditorDemo.options = this.cronOptions;
