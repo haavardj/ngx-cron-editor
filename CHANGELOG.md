@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.9-0](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.8...v0.7.9-0) (2023-08-14)
+
+
+### Bug Fixes
+
+* incorrenct values ([fcb8614](https://github.com/haavardj/ngx-cron-editor/commit/fcb86144b2f1b7969a773c0b43ccd308b6e96f93))
+* values not updated in forms ([d33d90d](https://github.com/haavardj/ngx-cron-editor/commit/d33d90d5f4b9ebb06d6f82f1dadd5f2780601eef))
+
 ### [0.7.8](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.7...v0.7.8) (2023-07-04)
 
 
