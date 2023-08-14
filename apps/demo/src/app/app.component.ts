@@ -9,7 +9,7 @@ import {FormControl } from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public cronExpression = '1 1 1/1 * *';
+  public cronExpression = '3 23/45 1 1/1 * *';
   public isCronDisabled = false;
   public cronOptions = new DefaultOptions();
 
@@ -18,7 +18,10 @@ export class AppComponent implements OnInit {
   cronEditorDemo: CronGenComponent;
 
   cronForm = new FormControl(this.cronExpression);
-  constructor() {}
+  constructor() {
+    this.cronOptions.cronFlavor = 'quartz';
+
+  }
 
   ngOnInit(): void {}
 

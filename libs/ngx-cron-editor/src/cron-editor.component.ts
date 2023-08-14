@@ -155,8 +155,6 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     const currentTab = tabChangeEvent.tab;
     let x: CronType;
 
-    console.log('on tab change');
-
     switch (currentTab) {
       case this.minutesTab:
         x = 'minutely';
@@ -189,6 +187,8 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   public async ngOnInit() {
     this.allForm.valueChanges.pipe(skip(1), debounceTime(50)).subscribe(value => {
 
+      console.log('onValueChanged...  ' + JSON.stringify(value));
+
       const cron = this.computeCron();
       // this.allForm.controls.expression.setValue(cron, {emitEvent: false});
       this.cronChange.emit(cron);
@@ -203,11 +203,11 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
       case 'minutely':
         cron = this.computeMinutesCron();
         break;
-      case 'daily':
-        cron = this.computeDailyCron();
-        break;
       case 'hourly':
         cron = this.computeHourlyCron();
+        break;
+      case 'daily':
+        cron = this.computeDailyCron();
         break;
       case 'weekly':
         cron = this.computeWeeklyCron();
@@ -280,9 +280,9 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     const state = this.allForm.value;
 
     if (state.specificWeekDay) {
-      return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.monthDayDefaultChar} 1/${state.months} ${state.day}${state.monthsWeek} ${this.yearDefaultChar}`.trim();
+      return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.monthDayDefaultChar} 1/${state.monthsInc} ${state.day}${state.monthsWeek} ${this.yearDefaultChar}`.trim();
     }
-    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.day} 1/${state.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.days} 1/${state.monthsInc} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
   private computeYearlyCron(): string {

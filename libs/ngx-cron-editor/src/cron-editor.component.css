@@ -6,8 +6,8 @@
 }
 
 .cron-editor-tab-content {
-  width: 1000px;
-  height: 200px;
+  width: 850px;
+  height: 280px;
   margin-top: 24px;
   border-radius: 8px;
 }
@@ -50,6 +50,7 @@
 .cron-editor-radio-group {
   flex-direction: column;
   margin: 15px 0;
+  display: inline-flex;
 }
 
 .cron-editor-radio-button {
