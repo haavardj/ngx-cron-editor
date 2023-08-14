@@ -21,7 +21,7 @@ function* range(start: number, end: number) {
   providers: []
 })
 export class TimePickerComponent {
-  @Input() public disabled;
+  @Input() public disabled = false;
   @Input() public use24HourTime = true;
   @Input() public hideHours = false;
   @Input() public hideMinutes = false;

@@ -25,6 +25,12 @@ export interface CronOptions {
 }
 
 export class DefaultOptions implements  CronOptions {
+
+  formInputClass: 'form-control cron-editor-input';
+  formSelectClass: 'form-control cron-editor-select';
+  formRadioClass: 'cron-editor-radio';
+  formCheckboxClass: 'cron-editor-checkbox';
+
   cronFlavor: CronFlavor = 'standard';
   defaultTime = '00:00:00';
   hideAdvancedTab = false;

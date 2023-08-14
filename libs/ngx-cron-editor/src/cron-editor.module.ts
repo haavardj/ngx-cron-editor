@@ -9,19 +9,21 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TimePickerComponent } from './cron-time-picker.component';
 import { CronGenComponent } from './cron-editor.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatTabsModule,
-    MatListModule,
-    MatSelectModule,
-    MatInputModule,
-    MatRadioModule,
-    MatCheckboxModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatTabsModule,
+        MatListModule,
+        MatSelectModule,
+        MatInputModule,
+        MatRadioModule,
+        MatCheckboxModule,
+        MatGridListModule
+    ],
   exports: [TimePickerComponent, CronGenComponent],
   declarations: [TimePickerComponent, CronGenComponent]
 })
