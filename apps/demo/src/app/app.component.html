@@ -2,41 +2,78 @@
 
   <h1>Angular Cron Expression Editor</h1>
 
-    <mat-card appearance="outlined" class="demo-card">
-      <mat-card-header class="demo-card-header">
-
-        <mat-card-title>
-          Select your cron flavor
-        </mat-card-title>
-        <div>
+  <mat-card class="input-cart" >
+    <mat-card-header>
+      <mat-card-title>
+        <h2>Select Type</h2>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="input-card-content">
           <mat-form-field>
             <mat-label>Flavor</mat-label>
             <mat-select (change)="cronFlavorChange()" [(ngModel)]="cronOptions.cronFlavor">
               <mat-option [value]="'quartz'">
                 Quartz
               </mat-option>
-
               <mat-option [value]="'standard'">
                 Standard
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </div>
-      </mat-card-header>
+    </mat-card-content>
+  </mat-card>
 
-      <mat-card-content class="demo-card-content">
-        <form >
-        <cron-editor  #cronEditorDemo [formControl]="cronForm"  [options]="cronOptions">Cron here...</cron-editor>
-        </form>
-      </mat-card-content>
+<form>
+  <mat-card appearance="outlined" class="demo-card" [formGroup]="form">
+    <mat-card-header class="demo-card-header">
+      <mat-card-title>
+        <h2>Reactive Form</h2>
 
-      <mat-card-footer class="demo-card-footer">
-        <div>
-          <h3>
-            <b>Expression: {{cronForm.value}}</b>
-          </h3>
-        </div>
-      </mat-card-footer>
+        <mat-form-field>
+          <mat-label>Initial Cron</mat-label>
+          <input type="text" matInput formControlName="expression">
+        </mat-form-field>
 
-    </mat-card>
+        <!-- Form change not emitted to cron editor without setting the expression manually. Not sure why! -->
+        <mat-button-toggle (click)="form.patchValue({expression: form.value.expression})">Update</mat-button-toggle>
+
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="demo-card-content">
+      <cron-editor  #cronEditorDemo2  formControlName="expression"  [options]="cronOptions">Cron here...</cron-editor>
+    </mat-card-content>
+    <mat-card-footer class="demo-card-footer">
+      <div>
+        <h3>
+          <b>Expression: {{this.form.controls.expression.value}}</b>
+        </h3>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+</form>
+
+  <!--  <mat-card appearance="outlined" class="demo-card">
+    <mat-card-header>
+      <mat-card-title class="input-card-content">
+        Template Driven
+        <mat-form-field>
+          <mat-label>Initial Cron</mat-label>
+          <input matInput [(ngModel)]="cronExpression" >
+        </mat-form-field>
+
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="demo-card-content">
+      <cron-editor  #cronEditorDemo1 [(ngModel)]="cronExpression"  [options]="cronOptions">Cron here...</cron-editor>
+    </mat-card-content>
+    <mat-card-footer class="demo-card-footer">
+      <div>
+        <h3>
+          <b>Expression: {{cronExpression}}</b>
+        </h3>
+      </div>
+    </mat-card-footer>
+  </mat-card>-->
+
 </section>

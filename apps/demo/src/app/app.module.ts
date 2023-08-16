@@ -14,6 +14,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { CronEditorModule } from 'ngx-cron-editor';
 import { AppComponent } from './app.component';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
   imports: [
@@ -30,7 +33,11 @@ import { AppComponent } from './app.component';
     MatIconModule,
     MatButtonModule,
     LayoutModule,
-    CronEditorModule],
+    CronEditorModule,
+    MatInputModule,
+    MatListModule,
+    MatButtonToggleModule
+  ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],
   providers: [

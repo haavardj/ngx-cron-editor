@@ -6,8 +6,6 @@
 }
 
 .cron-editor-tab-content {
-  width: 850px;
-  height: 280px;
   margin-top: 24px;
   border-radius: 8px;
 }
@@ -32,7 +30,6 @@
 }
 
 .cron-editor-main .cron-editor-container .hour-types {
-  width: 70px;
 }
 
 .nav-tabs li a {

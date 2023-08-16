@@ -1,10 +1,10 @@
-import {Component, Input, Output, OnInit, EventEmitter, forwardRef, ViewChild} from '@angular/core';
+import {Component, Input, Output, OnInit, EventEmitter, forwardRef, ViewChild, OnDestroy} from '@angular/core';
 import {CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
 import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
-import {debounceTime, skip} from 'rxjs';
+import {debounceTime, map, skip, Subscription, tap} from 'rxjs';
 
 type CronType = 'minutely' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'unknown';
 
@@ -50,21 +50,17 @@ function* range(start: number, end: number) {
   styleUrls: ['./cron-editor.component.css'],
   providers: [CRON_VALUE_ACCESSOR]
 })
-export class CronGenComponent implements OnInit, ControlValueAccessor {
+export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
-  public seconds = [... range(0, 59)];
-  public minutes = [... range(0, 59)];
-  public hours = [... range(0, 23)];
-
+  public seconds = [...range(0, 59)];
+  public minutes = [...range(0, 59)];
+  public hours = [...range(0, 23)];
 
   @Input() public backgroundColor: ThemePalette;
   @Input() public color: ThemePalette;
 
   @Input() public disabled = false;
   @Input() public options: CronOptions = new DefaultOptions();
-
-  // the name is an Angular convention, @Input variable name + "Change" suffix
-  @Output() cronChange = new EventEmitter<string>();
 
   public activeTab: string;
   public selectOptions = this.getSelectOptions();
@@ -90,8 +86,11 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   @ViewChild('advancedTab')
   advancedTab: MatTab;
 
+  formSub: Subscription;
+
+  touched = false;
   allForm = this.fb.group({
-    cronType: [<CronType> 'unknown', Validators.required],
+    cronType: [<CronType>'unknown', Validators.required],
     seconds: [0],
 
     minutes: [0],
@@ -123,6 +122,12 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     expression: ['0 0 0 0 0']
   });
 
+  /*
+ * ControlValueAccessor
+ */
+  public onChange: (value) => void
+  public onTouched: () => void;
+
 
   get isCronFlavorQuartz() {
     return this.options.cronFlavor === 'quartz';
@@ -144,7 +149,8 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     return this.options.cronFlavor === 'quartz' ? '?' : '*';
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+  }
 
   /* Update the cron output to that of the selected tab.
    * The cron output value is updated whenever a form is updated. To make it change in response to tab selection, we simply reset
@@ -185,15 +191,17 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   }
 
   public async ngOnInit() {
-    this.allForm.valueChanges.pipe(skip(1), debounceTime(50)).subscribe(value => {
+    this.formSub =  this.allForm.valueChanges.pipe(debounceTime(50)).subscribe(value => {
 
-      console.log('onValueChanged...  ' + JSON.stringify(value));
-
+      this.markAsTouched();
       const cron = this.computeCron();
       // this.allForm.controls.expression.setValue(cron, {emitEvent: false});
-      this.cronChange.emit(cron);
       this.onChange(cron);
     });
+  }
+
+  ngOnDestroy() {
+    this.formSub.unsubscribe();
   }
 
   private computeCron(): string {
@@ -239,7 +247,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
 
     const state = this.allForm.value;
 
-   return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} 0/${state.hoursPer} 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} 0/${state.hoursPer} 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
   private computeDailyCron(): string {
@@ -265,7 +273,7 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   }
 
 
-  private computeWeeklyCron(): string  {
+  private computeWeeklyCron(): string {
 
     const state = this.allForm.value;
     const days = this.selectOptions.days
@@ -363,120 +371,122 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
     // Parse cron tokens
     const t = cron.split(' ');
 
+
     // Seconds
-    this.allForm.controls.seconds.setValue(parseInt(t[0], 10))
+    this.allForm.controls.seconds.setValue(parseInt(t[0], 10), {emitEvent: false})
 
     // Minutes
     let x = parseCronNumberToken(t[1]);
-    this.allForm.controls.minutesPer.setValue(x.inc);
+    this.allForm.controls.minutesPer.setValue(x.inc, {emitEvent: false});
     this.allForm.controls.minutes.setValue(x.val);
 
     // Hours
     x = parseCronNumberToken(t[2])
     this.allForm.controls.hoursPer.setValue(x.inc);
     this.allForm.controls.hours.setValue(x.val);
-    this.allForm.controls.hoursType.setValue(this.getHourType(this.allForm.value.hours));
+    this.allForm.controls.hoursType.setValue(this.getHourType(this.allForm.value.hours), {emitEvent: false});
 
     // Day of Month
     x = parseCronNumberToken(t[3])
-    this.allForm.controls.days.setValue(x.val);
-    this.allForm.controls.daysPer.setValue(x.val);
+    this.allForm.controls.days.setValue(x.val, {emitEvent: false});
+    this.allForm.controls.daysPer.setValue(x.val), {emitEvent: false};
 
     // Month
     x = parseCronNumberToken(t[4])
-    this.allForm.controls.months.setValue(x.val);
-    this.allForm.controls.monthsInc.setValue(x.inc);
+    this.allForm.controls.months.setValue(x.val, {emitEvent: false});
+    this.allForm.controls.monthsInc.setValue(x.inc, {emitEvent: false});
 
     // Day of Week
     this.allForm.controls.day.setValue(t[5]);
     if (t[5].match('MON')) {
-      this.allForm.controls.MON.setValue(true);
+      this.allForm.controls.MON.setValue(true, {emitEvent: false});
     } else {
-      this.allForm.controls.MON.setValue(false);
+      this.allForm.controls.MON.setValue(false, {emitEvent: false});
     }
 
     if (t[5].match('TUE')) {
-      this.allForm.controls.TUE.setValue(true);
+      this.allForm.controls.TUE.setValue(true, {emitEvent: false});
     } else {
-      this.allForm.controls.TUE.setValue(false);
+      this.allForm.controls.TUE.setValue(false, {emitEvent: false});
     }
 
     if (t[5].match('WED')) {
-      this.allForm.controls.WED.setValue(true);
+      this.allForm.controls.WED.setValue(true, {emitEvent: false});
     } else {
-      this.allForm.controls.WED.setValue(false);
+      this.allForm.controls.WED.setValue(false, {emitEvent: false});
     }
 
     if (t[5].match('THU')) {
-      this.allForm.controls.THU.setValue(true);
+      this.allForm.controls.THU.setValue(true, {emitEvent: false});
     } else {
-      this.allForm.controls.THU.setValue(false);
+      this.allForm.controls.THU.setValue(false, {emitEvent: false});
     }
 
     if (t[5].match('FRI')) {
-      this.allForm.controls.FRI.setValue(true);
+      this.allForm.controls.FRI.setValue(true, {emitEvent: false});
     } else {
-      this.allForm.controls.FRI.setValue(false);
+      this.allForm.controls.FRI.setValue(false, {emitEvent: false});
     }
 
     if (t[5].match('SAT')) {
-      this.allForm.controls.SAT.setValue(true);
+      this.allForm.controls.SAT.setValue(true, {emitEvent: false});
     } else {
-      this.allForm.controls.SAT.setValue(false);
+      this.allForm.controls.SAT.setValue(false, {emitEvent: false});
     }
 
     if (t[5].match('SUN')) {
-      this.allForm.controls.SUN.setValue(true);
+      this.allForm.controls.SUN.setValue(true, {emitEvent: false});
     } else {
-      this.allForm.controls.SUN.setValue(false);
+      this.allForm.controls.SUN.setValue(false, {emitEvent: false});
     }
 
     // Year
     // Not supported
 
     if (cron.match(minutesExp)) {
-      this.allForm.controls.cronType.setValue('minutely');
+      this.allForm.controls.cronType.setValue('minutely', {emitEvent: false});
 
     } else if (cron.match(hourlyExp)) {
-      this.allForm.controls.cronType.setValue('hourly');
+      this.allForm.controls.cronType.setValue('hourly', {emitEvent: false});
 
     } else if (cron.match(dailyExp)) {
-      this.allForm.controls.cronType.setValue('daily');
+      this.allForm.controls.cronType.setValue('daily', {emitEvent: false});
       this.allForm.controls.weekdaysOnly.setValue(false);
 
     } else if (cron.match(dailyWeekdayExp)) {
-      this.allForm.controls.cronType.setValue('daily');
+      this.allForm.controls.cronType.setValue('daily', {emitEvent: false});
       this.allForm.controls.weekdaysOnly.setValue(true);
 
     } else if (cron.match(weeklyExp)) {
-      this.allForm.controls.cronType.setValue('weekly');
+      this.allForm.controls.cronType.setValue('weekly', {emitEvent: false});
 
     } else if (cron.match(monthlyExpo)) {
-      this.allForm.controls.cronType.setValue('monthly');
+      this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(false);
 
     } else if (cron.match(monthlyWeekdayExpo)) {
-      this.allForm.controls.cronType.setValue('monthly');
+      this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(true);
 
     } else if (cron.match(yearlyExp)) {
-      this.allForm.controls.cronType.setValue('yearly');
+      this.allForm.controls.cronType.setValue('yearly', {emitEvent: false});
       this.allForm.controls.specificMonthWeek.setValue(false);
 
     } else if (cron.match(yearlyMonthWeekExp)) {
-      this.allForm.controls.cronType.setValue('yearly');
+      this.allForm.controls.cronType.setValue('yearly', {emitEvent: false});
       this.allForm.controls.specificMonthWeek.setValue(false);
 
     } else {
-      this.allForm.controls.cronType.setValue('unknown');
+      this.allForm.controls.cronType.setValue('unknown', {emitEvent: false});
     }
+    this.allForm.updateValueAndValidity( {onlySelf: true});
   }
 
   private cronIsValid(cron: string): boolean {
     if (cron) {
       const cronParts = cron.split(' ');
       return (this.isCronFlavorQuartz && (cronParts.length === 6
-        || cronParts.length === 7)
+          || cronParts.length === 7)
         || (this.isCronFlavorStandard && cronParts.length === 5));
     }
 
@@ -527,13 +537,14 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
   }
 
 
-  /*
-   * ControlValueAccessor
-   */
-  onChange = (_: any) => { };
-  onTouched = () => { };
 
-  writeValue(obj: string): void {
+
+  writeValue(obj: string | null): void {
+    // console.log('Write value ' + obj);
+    if (obj === null) {
+      return
+    }
+
     this.handleModelChange(obj);
 
   }
@@ -548,5 +559,12 @@ export class CronGenComponent implements OnInit, ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+  }
+
+  markAsTouched() {
+    if (!this.touched) {
+      this.onTouched();
+      this.touched = true;
+    }
   }
 }
