@@ -51,7 +51,7 @@ function* range(start: number, end: number) {
   providers: [CRON_VALUE_ACCESSOR]
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
-
+  public tabIndex = 0;
   public seconds = [...range(0, 59)];
   public minutes = [...range(0, 59)];
   public hours = [...range(0, 23)];
@@ -213,21 +213,27 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
         break;
       case 'hourly':
         cron = this.computeHourlyCron();
+        this.tabIndex = 1;
         break;
       case 'daily':
         cron = this.computeDailyCron();
+        this.tabIndex = 2;
         break;
       case 'weekly':
         cron = this.computeWeeklyCron();
+        this.tabIndex = 3;
         break;
       case 'monthly':
         cron = this.computeMonthlyCron();
+        this.tabIndex = 4;
         break;
       case 'yearly':
         cron = this.computeYearlyCron();
+        this.tabIndex = 5;
         break;
       case 'unknown':
         cron = this.computeAdvancedExpression();
+        this.tabIndex = 6;
         break;
       default:
         throw Error('Unknown cron type ' + this.allForm.value.cronType);
@@ -394,7 +400,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     // Month
     x = parseCronNumberToken(t[4])
     this.allForm.controls.months.setValue(x.val, {emitEvent: false});
-    this.allForm.controls.monthsInc.setValue(x.inc, {emitEvent: false});
+    this.allForm.controls.monthsInc.setValue(x.inc, { emitEvent: false });
 
     // Day of Week
     this.allForm.controls.day.setValue(t[5]);
@@ -428,7 +434,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
       this.allForm.controls.FRI.setValue(false, {emitEvent: false});
     }
 
-    if (t[5].match('SAT')) {
+   if (t[5].match('SAT')) {
       this.allForm.controls.SAT.setValue(true, {emitEvent: false});
     } else {
       this.allForm.controls.SAT.setValue(false, {emitEvent: false});
