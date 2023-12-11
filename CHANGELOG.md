@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.10](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.9...v0.7.10) (2023-12-11)
+
+
+### Bug Fixes
+
+* Invalid expression when no weekday selected ([40700a9](https://github.com/haavardj/ngx-cron-editor/commit/40700a992bd367555b26f3d841e62088111350a5)), closes [#26](https://github.com/haavardj/ngx-cron-editor/issues/26)
+
 ### [0.7.9](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.8...v0.7.9) (2023-08-16)
 
 
