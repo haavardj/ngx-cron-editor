@@ -5,6 +5,7 @@ import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '
 import { ThemePalette } from '@angular/material/core';
 import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
 import {debounceTime, map, skip, Subscription, tap} from 'rxjs';
+import {J} from '@angular/cdk/keycodes';
 
 type CronType = 'minutely' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'unknown';
 
@@ -278,7 +279,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     const state = this.allForm.value;
     const days = this.selectOptions.days
       .reduce((acc, day) => state[day] ? acc.concat([day]) : acc, [])
-      .join(',');
+      .join(',') || '*';
 
     return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.monthDayDefaultChar} * ${days} ${this.yearDefaultChar}`.trim();
   }
