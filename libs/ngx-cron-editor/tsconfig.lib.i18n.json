@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.lib.json",
+
+  "angularCompilerOptions": {
+    "enableIvy": true,
+    "skipTemplateCodegen": false,
+    "flatModuleOutFile": null
+  },
+  "include": ["src/*.ts", "src/*.html", "public_api.ts"]
+}
