@@ -1,11 +1,10 @@
-import {Component, Input, Output, OnInit, EventEmitter, forwardRef, ViewChild, OnDestroy} from '@angular/core';
+import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy} from '@angular/core';
 import {CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
 import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
-import {debounceTime, map, skip, Subscription, tap} from 'rxjs';
-import {J} from '@angular/cdk/keycodes';
+import {debounceTime, Subscription } from 'rxjs';
 
 type CronType = 'minutely' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'unknown';
 
@@ -237,7 +236,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
         this.tabIndex = 6;
         break;
       default:
-        throw Error('Unknown cron type ' + this.allForm.value.cronType);
+        throw Error($localize `Unknown cron type ` + this.allForm.value.cronType);
     }
     return cron;
   }
@@ -329,11 +328,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
   public monthDayDisplay(month: string): string {
     if (month === 'L') {
-      return 'Last Day';
+      return $localize `Last Day`;
     } else if (month === 'LW') {
-      return 'Last Weekday';
+      return $localize `Last Weekday`;
     } else if (month === '1W') {
-      return 'First Weekday';
+      return $localize `First Weekday`;
     } else {
       return `${month}${this.getOrdinalSuffix(month)}`;
     }
@@ -359,11 +358,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
     if (!this.cronIsValid(cron)) {
       if (this.isCronFlavorQuartz) {
-        throw new Error('Invalid cron expression, there must be 6 or 7 segments');
+        throw new Error($localize `Invalid cron expression, there must be 6 or 7 segments`);
       }
 
       if (this.isCronFlavorStandard) {
-        throw new Error('Invalid cron expression, there must be 5 segments');
+        throw new Error($localize `Invalid cron expression, there must be 5 segments`);
       }
     }
 
@@ -396,7 +395,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     // Day of Month
     x = parseCronNumberToken(t[3])
     this.allForm.controls.days.setValue(x.val, {emitEvent: false});
-    this.allForm.controls.daysPer.setValue(x.val), {emitEvent: false};
+    this.allForm.controls.daysPer.setValue(x.val, {emitEvent: false});
 
     // Month
     x = parseCronNumberToken(t[4])

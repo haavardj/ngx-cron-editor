@@ -5,6 +5,17 @@
   "projects": {
     "demo": {
       "root": "apps/demo",
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "nb": {
+            "translation": [
+              "apps/demo/src/locale/messages.nb.xlf",
+              "libs/ngx-cron-editor/src/locale/messages.nb.xlf"
+            ]
+          }
+        }
+      },
       "sourceRoot": "src",
       "projectType": "application",
       "prefix": "demo",
@@ -17,6 +28,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "localize": ["en-US"],
             "outputPath": "dist/apps/demo",
             "index": "apps/demo/src/index.html",
             "main": "apps/demo/src/main.ts",
@@ -70,14 +82,20 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "demo:build:production"
+              "browserTarget": "demo:build"
             }
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
           "options": {
-            "browserTarget": "demo:build"
+            "browserTarget": "demo:build",
+            "format": "xlf",
+            "outputPath": "apps/demo/src/locale",
+            "sourceFile": "messages.xlf",
+            "targetFiles": [
+              "messages.nb.xlf"
+            ]
           }
         },
         "test": {
@@ -117,6 +135,13 @@
       "sourceRoot": "libs/ngx-cron-editor/src",
       "projectType": "library",
       "prefix": "ngx-cron-editor",
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "nb": {
+            "translation": ["libs/ngx-cron-editor/src/locale/messages.nb.xlf"]}
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -129,9 +154,31 @@
               "project": "libs/ngx-cron-editor/ng-package.prod.json",
               "tsConfig": "libs/ngx-cron-editor/tsconfig.lib.prod.json"
             }
-          },
-          "styles": ["libs/ngx-cron-editor/src/cron-editor-theme.scss"]
+          }
         },
+
+        "buildi8n": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "tsConfig": "libs/ngx-cron-editor/tsconfig.lib.i18n.json",
+            "outputPath": "dist/libs/ngx-cron-editor-i8n",
+            "index": "index.html",
+            "main": "libs/ngx-cron-editor/public_api.ts"
+          }
+        },
+        "extract-i18n": {
+          "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
+          "options": {
+            "browserTarget": "ngx-cron-editor:buildi8n",
+            "format": "xlf",
+            "sourceFile": "messages.xlf",
+            "outputPath": "libs/ngx-cron-editor/src/locale",
+            "targetFiles": [
+              "messages.nb.xlf"
+            ]
+          }
+        },
+
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
@@ -147,5 +194,5 @@
   },
   "cli": {
     "analytics": false
-  },
+  }
 }

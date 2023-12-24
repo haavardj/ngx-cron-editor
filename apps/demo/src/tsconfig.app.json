@@ -3,10 +3,23 @@
   "compilerOptions": {
     "outDir": "../../../out-tsc/demo",
     "module": "es2015",
-    "types": []
   },
+
+  "include": [
+    "**/*.ts",
+    "**/*.html"
+  ],
+
   "exclude": [
     "test.ts",
     "**/*.spec.ts"
-  ]
+  ],
+
+  "angularCompilerOptions": {
+    "enableIvy": false,
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true,
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true,
+  }
 }

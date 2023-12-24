@@ -1,5 +1,5 @@
 /*
- * Public API Surface of pmsys
+ * Public API Surface
  */
 
 export * from './src/cron-editor.module';
