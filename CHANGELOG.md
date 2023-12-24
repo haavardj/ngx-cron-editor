@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.11](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.10...v0.7.11) (2023-12-24)
+
+
+### Features
+
+* support for localization ([#27](https://github.com/haavardj/ngx-cron-editor/issues/27)) ([5a68acb](https://github.com/haavardj/ngx-cron-editor/commit/5a68acb3a95d04cee8b0b2dc143bbe6bb91589da)), closes [#25](https://github.com/haavardj/ngx-cron-editor/issues/25)
+
+
+### Bug Fixes
+
+* set tab index value  ([#22](https://github.com/haavardj/ngx-cron-editor/issues/22)) ([80c613e](https://github.com/haavardj/ngx-cron-editor/commit/80c613ec578496b71760e0f2b3eee7e51b43e9cf))
+* update no translations ([94230d6](https://github.com/haavardj/ngx-cron-editor/commit/94230d60ec862ce65add9cfc138d1cc577e4f74a))
+
 ### [0.7.10](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.9...v0.7.10) (2023-12-11)
 
 
