@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="7128127216866563640" datatype="html">
         <source>Unknown cron type</source>
-        <target state="new">Ukjent cron type</target>
+        <target state="translated">Ukjent cron type</target>
       </trans-unit>
       <trans-unit id="4733506484280777649" datatype="html">
         <source>Last Day</source>
@@ -40,11 +40,11 @@
       </trans-unit>
       <trans-unit id="be2e3eba8f8d675c0dfd9d573ce6f9da7d394537" datatype="html">
         <source>Every</source>
-        <target state="new">Hvert</target>
+        <target state="translated">Hvert</target>
       </trans-unit>
       <trans-unit id="28b5e5e4a77642274abad744fc46b5720c386bfe" datatype="html">
         <source>At time</source>
-        <target state="new">Ved</target>
+        <target state="translated">Ved</target>
       </trans-unit>
       <trans-unit id="6a4a2e0f73188c38fa9907d7e3981269d29faaa4" datatype="html">
         <source>Day(s)</source>
@@ -52,7 +52,7 @@
       </trans-unit>
       <trans-unit id="aa8fbb586df7cce971ca11a208629d8ca4b142b3" datatype="html">
         <source>Week Day (MON-FRI)</source>
-        <target state="new">Ukedag (MAN-FRE)</target>
+        <target state="translated">Ukedag (MAN-FRE)</target>
       </trans-unit>
       <trans-unit id="73a6efdf3c572ef7df7b542f0640a5c3272ba076" datatype="html">
         <source>Every</source>
@@ -60,7 +60,7 @@
       </trans-unit>
       <trans-unit id="9e76f1c87f78ce3359976700324f045f556e0ac9" datatype="html">
         <source>At</source>
-        <target state="new">På</target>
+        <target state="translated">På</target>
       </trans-unit>
       <trans-unit id="f2f580c540fa5b6d61509f67d565457bf75ffc42" datatype="html">
         <source>On the</source>
@@ -72,7 +72,7 @@
       </trans-unit>
       <trans-unit id="b24a84458953a7bc339b431c5eaa28a387b25a78" datatype="html">
         <source>of every</source>
-        <target state="new">hvert</target>
+        <target state="translated">hvert</target>
       </trans-unit>
       <trans-unit id="5bb4a09a669f55893c9a37a8480c8fa3f7ce5702" datatype="html">
         <source>Month</source>
@@ -84,15 +84,15 @@
       </trans-unit>
       <trans-unit id="a6f3562235b23afb55e3cc7e276a516c12eefd7c" datatype="html">
         <source>On the</source>
-        <target state="new">Ved</target>
+        <target state="translated">Ved</target>
       </trans-unit>
       <trans-unit id="7824f44811306a9285fdf85af4ce960ed9c761ce" datatype="html">
         <source>of</source>
-        <target state="new">av</target>
+        <target state="translated">av</target>
       </trans-unit>
       <trans-unit id="ed6e786f8603702d4b87c400e42edf4e0328bc9d" datatype="html">
         <source>At time</source>
-        <target state="new">Ved</target>
+        <target state="translated">Ved</target>
       </trans-unit>
       <trans-unit id="cc697167c19fb984956b08b0e01767da0dce90fa" datatype="html">
         <source>Expression</source>
