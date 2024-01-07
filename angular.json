@@ -78,18 +78,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "demo:build"
+            "buildTarget": "demo:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "demo:build"
+              "buildTarget": "demo:build"
             }
           }
         },
         "extract-i18n": {
           "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
           "options": {
-            "browserTarget": "demo:build",
+            "buildTarget": "demo:build",
             "format": "xlf",
             "outputPath": "apps/demo/src/locale",
             "sourceFile": "messages.xlf",
@@ -169,7 +169,7 @@
         "extract-i18n": {
           "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
           "options": {
-            "browserTarget": "ngx-cron-editor:buildi8n",
+            "buildTarget": "ngx-cron-editor:buildi8n",
             "format": "xlf",
             "sourceFile": "messages.xlf",
             "outputPath": "libs/ngx-cron-editor/src/locale",
