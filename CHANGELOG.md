@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.11...v0.8.0) (2024-02-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* The library will no longer support Angular versions < 15.
+
+* remove support for old Angular versions ([6e377bc](https://github.com/haavardj/ngx-cron-editor/commit/6e377bc0342cb5ff32c99299c4cf315d6e2da75b))
+
 ### [0.7.11](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.10...v0.7.11) (2023-12-24)
 
 
