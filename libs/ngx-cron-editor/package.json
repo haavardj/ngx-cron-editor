@@ -2,7 +2,7 @@
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "description": "A cron expression generator for Angular 6+",
   "name": "ngx-cron-editor",
-  "version": "0.7.11",
+  "version": "0.7.12",
   "repository": {
     "type": "git",
     "url": "git://github.com/haavardj/ngx-cron-editor"
@@ -31,14 +31,14 @@
   },
   "homepage": "https://github.com/haavardj/ngx-cron-editor",
   "peerDependencies": {
-    "@angular/core": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
-    "@angular/animations": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
-    "@angular/common": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
-    "@angular/forms": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
-    "@angular/platform-browser": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
-    "@angular/platform-browser-dynamic": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
-    "@angular/router": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
-    "@angular/material": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0"
+    "@angular/core": ">=6.0.0 <18.0.0",
+    "@angular/animations": ">=6.0.0 <18.0.0",
+    "@angular/common": ">=6.0.0 <18.0.0",
+    "@angular/forms": ">=6.0.0 <18.0.0",
+    "@angular/platform-browser": ">=6.0.0 <18.0.0",
+    "@angular/platform-browser-dynamic": ">=6.0.0 <18.0.0",
+    "@angular/router": ">=6.0.0 <18.0.0",
+    "@angular/material": ">=6.0.0 <18.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
