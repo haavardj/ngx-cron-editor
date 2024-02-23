@@ -572,7 +572,6 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     }
   }
   setTabByLabel() {
-    console.log(this.tabGroup);
     let tab = this.tabGroup._allTabs.toArray().find((tabItem: MatTab) => tabItem.textLabel === this.tabName);
     if (tab && !tab.disabled) {
       this.tabGroup.selectedIndex = this.tabGroup._allTabs.toArray().indexOf(tab);
