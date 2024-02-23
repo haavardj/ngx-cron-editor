@@ -1,5 +1,5 @@
 <section class="cron-editor-main">
-  <mat-tab-group class="cron-editor-container" (selectedTabChange)="onTabChange($event)" [backgroundColor]="backgroundColor" [color]="color" [(selectedIndex)]="tabIndex">
+  <mat-tab-group class="cron-editor-container" (selectedTabChange)="onTabChange($event)" [backgroundColor]="backgroundColor" [color]="color" #tabGroup>
 
     <!-- Minute -->
     <mat-tab [formGroup]="allForm" class="cron-editor-tab" i18n-label label="Minutely" *ngIf="!options.hideMinutesTab" #minutesTab>

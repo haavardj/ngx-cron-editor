@@ -3,7 +3,7 @@ import {CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
-import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
+import {MatTab, MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {debounceTime, Subscription } from 'rxjs';
 
 type CronType = 'minutely' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'unknown';
@@ -51,7 +51,6 @@ function* range(start: number, end: number) {
   providers: [CRON_VALUE_ACCESSOR]
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
-  public tabIndex = 0;
   public seconds = [...range(0, 59)];
   public minutes = [...range(0, 59)];
   public hours = [...range(0, 23)];
@@ -63,7 +62,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   @Input() public options: CronOptions = new DefaultOptions();
 
   public activeTab: string;
+  public tabName: string;
   public selectOptions = this.getSelectOptions();
+
+  @ViewChild('tabGroup')
+  tabGroup!: MatTabGroup;
 
   @ViewChild('minutesTab')
   minutesTab: MatTab;
@@ -195,11 +198,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
       this.markAsTouched();
       const cron = this.computeCron();
+      this.setTabByLabel();
       // this.allForm.controls.expression.setValue(cron, {emitEvent: false});
       this.onChange(cron);
     });
   }
-
   ngOnDestroy() {
     this.formSub.unsubscribe();
   }
@@ -207,33 +210,28 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   private computeCron(): string {
 
     let cron: string;
+    this.tabName = this.allForm.value.cronType;
     switch (this.allForm.value.cronType) {
       case 'minutely':
         cron = this.computeMinutesCron();
         break;
       case 'hourly':
         cron = this.computeHourlyCron();
-        this.tabIndex = 1;
         break;
       case 'daily':
         cron = this.computeDailyCron();
-        this.tabIndex = 2;
         break;
       case 'weekly':
         cron = this.computeWeeklyCron();
-        this.tabIndex = 3;
         break;
       case 'monthly':
         cron = this.computeMonthlyCron();
-        this.tabIndex = 4;
         break;
       case 'yearly':
         cron = this.computeYearlyCron();
-        this.tabIndex = 5;
         break;
       case 'unknown':
         cron = this.computeAdvancedExpression();
-        this.tabIndex = 6;
         break;
       default:
         throw Error($localize `Unknown cron type ` + this.allForm.value.cronType);
@@ -571,6 +569,13 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     if (!this.touched) {
       this.onTouched();
       this.touched = true;
+    }
+  }
+  setTabByLabel() {
+    console.log(this.tabGroup);
+    let tab = this.tabGroup._allTabs.toArray().find((tabItem: MatTab) => tabItem.textLabel === this.tabName);
+    if (tab && !tab.disabled) {
+      this.tabGroup.selectedIndex = this.tabGroup._allTabs.toArray().indexOf(tab);
     }
   }
 }
