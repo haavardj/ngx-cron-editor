@@ -377,7 +377,6 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     // Parse cron tokens
     const t = cron.split(' ');
 
-
     // Seconds
     this.allForm.controls.seconds.setValue(parseInt(t[0], 10), {emitEvent: false})
 
@@ -395,7 +394,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     // Day of Month
     x = parseCronNumberToken(t[3])
     this.allForm.controls.days.setValue(x.val, {emitEvent: false});
-    this.allForm.controls.daysPer.setValue(x.val, {emitEvent: false});
+    this.allForm.controls.daysPer.setValue(x.inc, {emitEvent: false});
 
     // Month
     x = parseCronNumberToken(t[4])
@@ -546,13 +545,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
 
   writeValue(obj: string | null): void {
-    // console.log('Write value ' + obj);
     if (obj === null) {
       return
     }
 
     this.handleModelChange(obj);
-
   }
 
   registerOnChange(fn: any): void {
