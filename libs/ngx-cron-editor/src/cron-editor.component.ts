@@ -13,8 +13,8 @@ const hourlyExp = /\d+ \d+ 0\/\d+ 1\/1 \* [\?\*] \*/;
 const dailyExp = /\d+ \d+ \d+ 1\/\d+ \* [\?\*] \*/;
 const dailyWeekdayExp = /\d+ \d+ \d+ [\?\*] \* MON-FRI \*/;
 const weeklyExp = /\d+ \d+ \d+ [\?\*] \* (MON|TUE|WED|THU|FRI|SAT|SUN)(,(MON|TUE|WED|THU|FRI|SAT|SUN))* \*/;
-const monthlyExpo = /\d+ \d+ \d+ (\d+|L|LW|1W) 1\/\d+ [\?\*] \*/;
-const monthlyWeekdayExpo = /\d+ \d+ \d+ [\?\*] 1\/\d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
+const monthlyExp = /\d+ \d+ \d+ (\d+|L|LW|1W) 1\/\d+ [\?\*] \*/;
+const monthlyWeekdayExp = /\d+ \d+ \d+ [\?\*] 1\/\d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
 const yearlyExp  = /\d+ \d+ \d+ (\d+|L|LW|1W) \d+ [\?\*] \*/;
 const yearlyMonthWeekExp = /\d+ \d+ \d+ [\?\*] \d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
 
@@ -25,14 +25,14 @@ export const CRON_VALUE_ACCESSOR: any = {
 };
 
 interface CronToken {
-  val: number;
-  inc: number;
+  val: string;
+  inc: string;
 }
 
 function parseCronNumberToken(val: string): CronToken {
-  const v = val.split('/').map( x => parseInt(x, 10));
+  const v = val.split('/');
   if (v.length === 1) {
-    return {val: v[0], inc: 0};
+    return {val: v[0], inc: '0'};
   }
   return {val: v[0], inc: v[1]}
 }
@@ -52,9 +52,6 @@ function* range(start: number, end: number) {
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
   public tabIndex = 0;
-  public seconds = [...range(0, 59)];
-  public minutes = [...range(0, 59)];
-  public hours = [...range(0, 23)];
 
   @Input() public backgroundColor: ThemePalette;
   @Input() public color: ThemePalette;
@@ -91,22 +88,22 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   touched = false;
   allForm = this.fb.group({
     cronType: [<CronType>'unknown', Validators.required],
-    seconds: [0],
+    seconds: ['0'],
 
-    minutes: [0],
-    minutesPer: [0],
+    minutes: ['0'],
+    minutesPer: ['0'],
 
-    hours: [this.getAmPmHour(0)],
-    hoursPer: [0],
-    hoursType: [this.getHourType(0)],
+    hours: [this.getAmPmHour('0')],
+    hoursPer: ['0'],
+    hoursType: [this.getHourType('0')],
 
-    days: [0],  // Days of Month
-    daysPer: [0],
+    days: ['0'],  // Days of Month, 1, 2, 31....
+    daysPer: ['0'],
 
-    months: [0],
-    monthsInc: [0],
+    months: ['0'],
+    monthsInc: ['0'],
 
-    day: ['1'], // Day of week '1' or 'MON;
+    day: ['MON'], // Day of week '1' or 'MON;
     monthsWeek: ['#1'],
 
     weekdaysOnly: [false],
@@ -305,7 +302,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     if (state.specificMonthWeek) {
       return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.monthDayDefaultChar} ${state.months} ${state.day}${state.monthsWeek} ${this.yearDefaultChar}`.trim();
     }
-    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.day} ${state.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.days} ${state.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
   private computeAdvancedExpression(): string {
@@ -322,11 +319,16 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     return MonthWeeks[monthWeekNumber];
   }
 
-  public monthDisplay(month: number): string {
-    return Months[month];
+  public monthDisplay(month: string): string {
+    return Months[parseInt(month, 10)];
   }
 
-  public monthDayDisplay(month: string): string {
+  public monthDayDisplay(month: string | number): string {
+
+    if (typeof month === 'number') {
+      return `${month}${this.getOrdinalSuffix(month)}`
+    }
+
     if (month === 'L') {
       return $localize `Last Day`;
     } else if (month === 'LW') {
@@ -338,19 +340,31 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     }
   }
 
-  private getAmPmHour(hour: number) {
-    return this.options.use24HourTime ? hour : (hour + 11) % 12 + 1;
+  private getAmPmHour(hour: string): string {
+
+    if (this.options.use24HourTime) {
+      return hour;
+    }
+    return ((parseInt(hour, 10) + 11) % 12 + 1).toString()
   }
 
-  private getHourType(hour: number) {
-    return this.options.use24HourTime ? undefined : (hour >= 12 ? 'PM' : 'AM');
+  // Return the AM or PM component of a clocktime, or null if 24-hour format is used.
+  private getHourType(hour: string): string | null {
+    if (this.options.use24HourTime) {
+      return null;
+    }
+
+    if (parseInt(hour, 10) >= 12) {
+      return 'PM';
+    }
+    return 'AM';
   }
 
-  private hourToCron(hour: number, hourType: string) {
+  private hourToCron(hour: string, hourType: string): string {
     if (this.options.use24HourTime) {
       return hour;
     } else {
-      return hourType === 'AM' ? (hour === 12 ? 0 : hour) : (hour === 12 ? 12 : hour + 12);
+      return hourType === 'AM' ? (hour === '12' ? '0' : hour) : (hour === '12' ? '12' :  (parseInt(hour, 10) + 12).toString());
     }
   }
 
@@ -377,9 +391,8 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     // Parse cron tokens
     const t = cron.split(' ');
 
-
     // Seconds
-    this.allForm.controls.seconds.setValue(parseInt(t[0], 10), {emitEvent: false})
+    this.allForm.controls.seconds.setValue(t[0], {emitEvent: false})
 
     // Minutes
     let x = parseCronNumberToken(t[1]);
@@ -395,7 +408,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     // Day of Month
     x = parseCronNumberToken(t[3])
     this.allForm.controls.days.setValue(x.val, {emitEvent: false});
-    this.allForm.controls.daysPer.setValue(x.val, {emitEvent: false});
+    this.allForm.controls.daysPer.setValue(x.inc, {emitEvent: false});
 
     // Month
     x = parseCronNumberToken(t[4])
@@ -403,47 +416,43 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     this.allForm.controls.monthsInc.setValue(x.inc, { emitEvent: false });
 
     // Day of Week
-    this.allForm.controls.day.setValue(t[5]);
-    if (t[5].match('MON')) {
-      this.allForm.controls.MON.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.MON.setValue(false, {emitEvent: false});
+    this.allForm.controls.SUN.setValue(t[5].match(/(?<!#)((SUN)|0)/) !== null, {emitEvent: false});
+    this.allForm.controls.MON.setValue(t[5].match(/(?<!#)((MON)|1)/) !== null, {emitEvent: false});
+    this.allForm.controls.TUE.setValue(t[5].match(/(?<!#)((TUE)|2)/) !== null, {emitEvent: false});
+    this.allForm.controls.WED.setValue(t[5].match(/(?<!#)((WED)|3)/) !== null, {emitEvent: false});
+    this.allForm.controls.THU.setValue(t[5].match(/(?<!#)((THU)|4)/) !== null, {emitEvent: false});
+    this.allForm.controls.FRI.setValue(t[5].match(/(?<!#)((FRI)|5)/) !== null, {emitEvent: false});
+    this.allForm.controls.SAT.setValue(t[5].match(/(?<!#)((SAT)|6)/) !== null, {emitEvent: false});
+
+
+    // Get value after # sign
+    const y = t[5].match(/#[0-9]*$/)
+    if (y) {
+      this.allForm.controls.monthsWeek.setValue(y[0], {emitEvent: false});
     }
 
-    if (t[5].match('TUE')) {
-      this.allForm.controls.TUE.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.TUE.setValue(false, {emitEvent: false});
+    // Update the day control from selected weekdays.
+    // Note, only one day is supported here.
+    if (this.allForm.controls.SUN.value) {
+      this.allForm.controls.day.setValue('SUN', {emitEvent: false});
     }
-
-    if (t[5].match('WED')) {
-      this.allForm.controls.WED.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.WED.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.MON.value) {
+      this.allForm.controls.day.setValue('MON', {emitEvent: false});
     }
-
-    if (t[5].match('THU')) {
-      this.allForm.controls.THU.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.THU.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.TUE.value) {
+      this.allForm.controls.day.setValue('TUE', {emitEvent: false});
     }
-
-    if (t[5].match('FRI')) {
-      this.allForm.controls.FRI.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.FRI.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.WED.value) {
+      this.allForm.controls.day.setValue('WED', {emitEvent: false});
     }
-
-   if (t[5].match('SAT')) {
-      this.allForm.controls.SAT.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.SAT.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.THU.value) {
+      this.allForm.controls.day.setValue('THU', {emitEvent: false});
     }
-
-    if (t[5].match('SUN')) {
-      this.allForm.controls.SUN.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.SUN.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.FRI.value) {
+      this.allForm.controls.day.setValue('FRI', {emitEvent: false});
+    }
+    if (this.allForm.controls.SAT.value) {
+      this.allForm.controls.day.setValue('SAT', {emitEvent: false});
     }
 
     // Year
@@ -466,11 +475,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     } else if (cron.match(weeklyExp)) {
       this.allForm.controls.cronType.setValue('weekly', {emitEvent: false});
 
-    } else if (cron.match(monthlyExpo)) {
+    } else if (cron.match(monthlyExp)) {
       this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(false);
 
-    } else if (cron.match(monthlyWeekdayExpo)) {
+    } else if (cron.match(monthlyWeekdayExp)) {
       this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(true);
 
@@ -480,7 +489,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
     } else if (cron.match(yearlyMonthWeekExp)) {
       this.allForm.controls.cronType.setValue('yearly', {emitEvent: false});
-      this.allForm.controls.specificMonthWeek.setValue(false);
+      this.allForm.controls.specificMonthWeek.setValue(true);
 
     } else {
       this.allForm.controls.cronType.setValue('unknown', {emitEvent: false});
@@ -500,16 +509,23 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   }
 
 
-  private getOrdinalSuffix(value: string) {
-    if (value.length > 1) {
-      const secondToLastDigit = value.charAt(value.length - 2);
-      if (secondToLastDigit === '1') {
-        return 'th';
-      }
+  private getOrdinalSuffix(v: string | number): string {
+
+    // Convert to string. There is also a faster LOG10 algorithm, but it requires the math library.
+    let value: string;
+    if (typeof v === 'number') {
+      value = v.toString(10);
+    } else {
+      value = v;
     }
 
-    const lastDigit = value.charAt(value.length - 1);
-    switch (lastDigit) {
+    // th if secondToLastDigit is 1: ..10th, ..11th, ..19th,
+    if (value.length > 1 && value.charAt(value.length - 2) === '1') {
+        return 'th';
+    }
+
+    // Check last digit:  21st, 22nd, 23rd, 24th, 25t, etc.
+    switch (value.charAt(value.length - 1)) {
       case '1':
         return 'st';
       case '2':
@@ -523,14 +539,14 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
   private getSelectOptions() {
     return {
-      months: this.getRange(1, 12),
+      months: this.getRange(1, 12).map(String),
       monthWeeks: ['#1', '#2', '#3', '#4', '#5', 'L'],
-      days: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
-      minutes: this.getRange(0, 59),
-      fullMinutes: this.getRange(0, 59),
-      seconds: this.getRange(0, 59),
-      hours: this.getRange(1, 23),
-      monthDays: this.getRange(1, 31),
+      days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+      minutes: this.getRange(0, 59).map(String),
+      fullMinutes: this.getRange(0, 59).map(String),
+      seconds: this.getRange(0, 59).map(String),
+      hours: this.getRange(1, 23).map(String),
+      monthDays: this.getRange(1, 31).map(String),
       monthDaysWithLasts: ['1W', ...[...this.getRange(1, 31).map(String)], 'LW', 'L'],
       monthDaysWithOutLasts: [...[...this.getRange(1, 31).map(String)]],
       hourTypes: ['AM', 'PM']
@@ -546,13 +562,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
 
   writeValue(obj: string | null): void {
-    // console.log('Write value ' + obj);
     if (obj === null) {
       return
     }
 
     this.handleModelChange(obj);
-
   }
 
   registerOnChange(fn: any): void {

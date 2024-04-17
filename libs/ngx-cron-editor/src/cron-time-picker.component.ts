@@ -28,12 +28,12 @@ export class TimePickerComponent implements OnInit {
 
   allForm: FormGroup;
 
-  public minutes =  [...range(0, 59) ];
-  public seconds = [...range(0, 59) ];
+  public minutes =  [...range(0, 59) ].map(String);
+  public seconds = [...range(0, 59) ].map(String);
   public hourTypes = ['AM', 'PM'];
 
-  get hours(): number[] {
-    return this.use24HourTime ? [... range(0, 23)] : [... range(0, 12)];
+  get hours(): string[] {
+    return this.use24HourTime ? [... range(0, 23)].map(String) : [... range(0, 12)].map(String);
   }
 
   constructor(public parent: ControlContainer) {}
