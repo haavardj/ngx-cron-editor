@@ -407,13 +407,14 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     this.allForm.controls.monthsInc.setValue(x.inc, { emitEvent: false });
 
     // Day of Week
+    this.allForm.controls.SUN.setValue(t[5].match(/(?<!#)((SUN)|0)/) !== null, {emitEvent: false});
     this.allForm.controls.MON.setValue(t[5].match(/(?<!#)((MON)|1)/) !== null, {emitEvent: false});
     this.allForm.controls.TUE.setValue(t[5].match(/(?<!#)((TUE)|2)/) !== null, {emitEvent: false});
     this.allForm.controls.WED.setValue(t[5].match(/(?<!#)((WED)|3)/) !== null, {emitEvent: false});
     this.allForm.controls.THU.setValue(t[5].match(/(?<!#)((THU)|4)/) !== null, {emitEvent: false});
     this.allForm.controls.FRI.setValue(t[5].match(/(?<!#)((FRI)|5)/) !== null, {emitEvent: false});
     this.allForm.controls.SAT.setValue(t[5].match(/(?<!#)((SAT)|6)/) !== null, {emitEvent: false});
-    this.allForm.controls.SUN.setValue(t[5].match(/(?<!#)((SUN)|7)/) !== null, {emitEvent: false});
+
 
     // Get value after # sign
     const y = t[5].match(/#[0-9]*$/)
@@ -421,6 +422,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
       this.allForm.controls.monthsWeek.setValue(y[0], {emitEvent: false});
     }
 
+    // Update the day control from selected weekdays.
+    // Note, only one day is supported here.
+    if (this.allForm.controls.SUN.value) {
+      this.allForm.controls.day.setValue('SUN', {emitEvent: false});
+    }
     if (this.allForm.controls.MON.value) {
       this.allForm.controls.day.setValue('MON', {emitEvent: false});
     }
@@ -438,9 +444,6 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     }
     if (this.allForm.controls.SAT.value) {
       this.allForm.controls.day.setValue('SAT', {emitEvent: false});
-    }
-    if (this.allForm.controls.SUN.value) {
-      this.allForm.controls.day.setValue('SUN', {emitEvent: false});
     }
 
     // Year
@@ -529,7 +532,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     return {
       months: this.getRange(1, 12),
       monthWeeks: ['#1', '#2', '#3', '#4', '#5', 'L'],
-      days: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+      days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
       minutes: this.getRange(0, 59),
       fullMinutes: this.getRange(0, 59),
       seconds: this.getRange(0, 59),
