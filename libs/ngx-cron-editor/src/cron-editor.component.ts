@@ -13,8 +13,8 @@ const hourlyExp = /\d+ \d+ 0\/\d+ 1\/1 \* [\?\*] \*/;
 const dailyExp = /\d+ \d+ \d+ 1\/\d+ \* [\?\*] \*/;
 const dailyWeekdayExp = /\d+ \d+ \d+ [\?\*] \* MON-FRI \*/;
 const weeklyExp = /\d+ \d+ \d+ [\?\*] \* (MON|TUE|WED|THU|FRI|SAT|SUN)(,(MON|TUE|WED|THU|FRI|SAT|SUN))* \*/;
-const monthlyExpo = /\d+ \d+ \d+ (\d+|L|LW|1W) 1\/\d+ [\?\*] \*/;
-const monthlyWeekdayExpo = /\d+ \d+ \d+ [\?\*] 1\/\d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
+const monthlyExp = /\d+ \d+ \d+ (\d+|L|LW|1W) 1\/\d+ [\?\*] \*/;
+const monthlyWeekdayExp = /\d+ \d+ \d+ [\?\*] 1\/\d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
 const yearlyExp  = /\d+ \d+ \d+ (\d+|L|LW|1W) \d+ [\?\*] \*/;
 const yearlyMonthWeekExp = /\d+ \d+ \d+ [\?\*] \d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
 
@@ -52,9 +52,6 @@ function* range(start: number, end: number) {
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
   public tabIndex = 0;
-  public seconds = [...range(0, 59)];
-  public minutes = [...range(0, 59)];
-  public hours = [...range(0, 23)];
 
   @Input() public backgroundColor: ThemePalette;
   @Input() public color: ThemePalette;
@@ -100,7 +97,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     hoursPer: ['0'],
     hoursType: [this.getHourType('0')],
 
-    days: ['0'],  // Days of Month
+    days: ['0'],  // Days of Month, 1, 2, 31....
     daysPer: ['0'],
 
     months: ['0'],
@@ -478,11 +475,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     } else if (cron.match(weeklyExp)) {
       this.allForm.controls.cronType.setValue('weekly', {emitEvent: false});
 
-    } else if (cron.match(monthlyExpo)) {
+    } else if (cron.match(monthlyExp)) {
       this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(false);
 
-    } else if (cron.match(monthlyWeekdayExpo)) {
+    } else if (cron.match(monthlyWeekdayExp)) {
       this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(true);
 
@@ -492,7 +489,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
     } else if (cron.match(yearlyMonthWeekExp)) {
       this.allForm.controls.cronType.setValue('yearly', {emitEvent: false});
-      this.allForm.controls.specificMonthWeek.setValue(false);
+      this.allForm.controls.specificMonthWeek.setValue(true);
 
     } else {
       this.allForm.controls.cronType.setValue('unknown', {emitEvent: false});
@@ -542,7 +539,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
   private getSelectOptions() {
     return {
-      months: this.getRange(1, 12),
+      months: this.getRange(1, 12).map(String),
       monthWeeks: ['#1', '#2', '#3', '#4', '#5', 'L'],
       days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
       minutes: this.getRange(0, 59).map(String),
