@@ -319,8 +319,8 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     return MonthWeeks[monthWeekNumber];
   }
 
-  public monthDisplay(month: number): string {
-    return Months[month];
+  public monthDisplay(month: string): string {
+    return Months[parseInt(month, 10)];
   }
 
   public monthDayDisplay(month: string | number): string {
