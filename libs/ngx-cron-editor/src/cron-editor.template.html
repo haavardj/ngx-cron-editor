@@ -10,7 +10,7 @@
           <mat-form-field>
             <mat-label i18n>Minute(s)</mat-label>
             <mat-select formControlName="minutesPer">
-              <mat-option *ngFor="let minute of minutes" [value]="minute">{{minute}}</mat-option>
+              <mat-option *ngFor="let minute of selectOptions.minutes" [value]="minute">{{minute}}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -37,7 +37,7 @@
           <mat-form-field [formGroup]="allForm">
             <mat-label i18n>Hour(s)</mat-label>
             <mat-select formControlName="hoursPer">
-              <mat-option *ngFor="let hour of hours" [value]="hour">{{hour}}</mat-option>
+              <mat-option *ngFor="let hour of selectOptions.hours" [value]="hour">{{hour}}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -199,23 +199,14 @@
       <div class="cron-editor-tab-content" [formGroup]="allForm">
         <mat-radio-group class="cron-editor-radio-group" formControlName="specificMonthWeek">
           <mat-radio-button name="yearly-radio" class="cron-editor-radio-button" [value]="false" [ngClass]="options.formRadioClass">
-            <ng-container i18n> On the </ng-container>
 
+            <ng-container i18n>On the </ng-container>
 
-            <mat-form-field  *ngIf="options.cronFlavor === 'quartz'">
+            <mat-form-field>
               <mat-label i18n>Day</mat-label>
-              <mat-select class="month-days" formControlName="day">
-                <mat-option *ngFor="let monthDaysWithLast of selectOptions.monthDaysWithLasts" [value]="monthDaysWithLast">
-                  {{monthDayDisplay(monthDaysWithLast)}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field *ngIf="options.cronFlavor === 'standard'">
-              <mat-label i18n>Day</mat-label>
-              <mat-select class="month-days" formControlName="day" >
-                <mat-option *ngFor="let monthDaysWithOutLast of selectOptions.monthDaysWithOutLasts" [value]="monthDaysWithOutLast">
-                  {{monthDayDisplay(monthDaysWithOutLast)}}
+              <mat-select class="month-days" formControlName="days" >
+                <mat-option *ngFor="let monthDay of selectOptions.monthDays" [value]="monthDay">
+                  {{monthDayDisplay(monthDay)}}
                 </mat-option>
               </mat-select>
             </mat-form-field>

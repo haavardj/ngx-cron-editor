@@ -25,14 +25,14 @@ export const CRON_VALUE_ACCESSOR: any = {
 };
 
 interface CronToken {
-  val: number;
-  inc: number;
+  val: string;
+  inc: string;
 }
 
 function parseCronNumberToken(val: string): CronToken {
-  const v = val.split('/').map( x => parseInt(x, 10));
+  const v = val.split('/');
   if (v.length === 1) {
-    return {val: v[0], inc: 0};
+    return {val: v[0], inc: '0'};
   }
   return {val: v[0], inc: v[1]}
 }
@@ -91,20 +91,20 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   touched = false;
   allForm = this.fb.group({
     cronType: [<CronType>'unknown', Validators.required],
-    seconds: [0],
+    seconds: ['0'],
 
-    minutes: [0],
-    minutesPer: [0],
+    minutes: ['0'],
+    minutesPer: ['0'],
 
-    hours: [this.getAmPmHour(0)],
-    hoursPer: [0],
-    hoursType: [this.getHourType(0)],
+    hours: [this.getAmPmHour('0')],
+    hoursPer: ['0'],
+    hoursType: [this.getHourType('0')],
 
-    days: [0],  // Days of Month
-    daysPer: [0],
+    days: ['0'],  // Days of Month
+    daysPer: ['0'],
 
-    months: [0],
-    monthsInc: [0],
+    months: ['0'],
+    monthsInc: ['0'],
 
     day: ['MON'], // Day of week '1' or 'MON;
     monthsWeek: ['#1'],
@@ -305,7 +305,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     if (state.specificMonthWeek) {
       return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.monthDayDefaultChar} ${state.months} ${state.day}${state.monthsWeek} ${this.yearDefaultChar}`.trim();
     }
-    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.day} ${state.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.days} ${state.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
   private computeAdvancedExpression(): string {
@@ -343,19 +343,31 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     }
   }
 
-  private getAmPmHour(hour: number) {
-    return this.options.use24HourTime ? hour : (hour + 11) % 12 + 1;
+  private getAmPmHour(hour: string): string {
+
+    if (this.options.use24HourTime) {
+      return hour;
+    }
+    return ((parseInt(hour, 10) + 11) % 12 + 1).toString()
   }
 
-  private getHourType(hour: number) {
-    return this.options.use24HourTime ? undefined : (hour >= 12 ? 'PM' : 'AM');
+  // Return the AM or PM component of a clocktime, or null if 24-hour format is used.
+  private getHourType(hour: string): string | null {
+    if (this.options.use24HourTime) {
+      return null;
+    }
+
+    if (parseInt(hour, 10) >= 12) {
+      return 'PM';
+    }
+    return 'AM';
   }
 
-  private hourToCron(hour: number, hourType: string) {
+  private hourToCron(hour: string, hourType: string): string {
     if (this.options.use24HourTime) {
       return hour;
     } else {
-      return hourType === 'AM' ? (hour === 12 ? 0 : hour) : (hour === 12 ? 12 : hour + 12);
+      return hourType === 'AM' ? (hour === '12' ? '0' : hour) : (hour === '12' ? '12' :  (parseInt(hour, 10) + 12).toString());
     }
   }
 
@@ -383,7 +395,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     const t = cron.split(' ');
 
     // Seconds
-    this.allForm.controls.seconds.setValue(parseInt(t[0], 10), {emitEvent: false})
+    this.allForm.controls.seconds.setValue(t[0], {emitEvent: false})
 
     // Minutes
     let x = parseCronNumberToken(t[1]);
@@ -533,11 +545,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
       months: this.getRange(1, 12),
       monthWeeks: ['#1', '#2', '#3', '#4', '#5', 'L'],
       days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
-      minutes: this.getRange(0, 59),
-      fullMinutes: this.getRange(0, 59),
-      seconds: this.getRange(0, 59),
-      hours: this.getRange(1, 23),
-      monthDays: this.getRange(1, 31),
+      minutes: this.getRange(0, 59).map(String),
+      fullMinutes: this.getRange(0, 59).map(String),
+      seconds: this.getRange(0, 59).map(String),
+      hours: this.getRange(1, 23).map(String),
+      monthDays: this.getRange(1, 31).map(String),
       monthDaysWithLasts: ['1W', ...[...this.getRange(1, 31).map(String)], 'LW', 'L'],
       monthDaysWithOutLasts: [...[...this.getRange(1, 31).map(String)]],
       hourTypes: ['AM', 'PM']
