@@ -126,27 +126,14 @@
 
               <ng-container i18n>On the</ng-container>
 
-              <ng-container *ngIf="options.cronFlavor === 'quartz'">
                 <mat-form-field>
                   <mat-label i18n>Day</mat-label>
                   <mat-select class="month-days" formControlName="days">
-                    <mat-option *ngFor="let monthDaysWithLast of selectOptions.monthDaysWithLasts" [value]="monthDaysWithLast">
-                      {{monthDayDisplay(monthDaysWithLast)}}
+                    <mat-option *ngFor="let monthDay of selectOptions.monthDays" [value]="monthDay">
+                      {{monthDayDisplay(monthDay)}}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
-              </ng-container>
-
-              <ng-container *ngIf="options.cronFlavor === 'standard'">
-                <mat-form-field>
-                  <mat-label i18n>Day</mat-label>
-                  <mat-select class="month-days" formControlName="days">
-                    <mat-option *ngFor="let monthDaysWithOutLast of selectOptions.monthDaysWithOutLasts" [value]="monthDaysWithOutLast">
-                      {{monthDayDisplay(monthDaysWithOutLast)}}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </ng-container>
 
               <ng-container i18n> of every </ng-container>
 
@@ -162,8 +149,8 @@
           </mat-radio-button>
 
           <mat-radio-button name="monthly-radio" class="cron-editor-radio-button"  [value]="true" [ngClass]="options.formRadioClass">
-            <!-- Spesific Week day -->
 
+            <!-- Spesific Week day -->
             <ng-container i18n>On the</ng-container>
 
               <mat-form-field>

@@ -106,7 +106,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     months: [0],
     monthsInc: [0],
 
-    day: ['1'], // Day of week '1' or 'MON;
+    day: ['MON'], // Day of week '1' or 'MON;
     monthsWeek: ['#1'],
 
     weekdaysOnly: [false],
@@ -326,7 +326,12 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     return Months[month];
   }
 
-  public monthDayDisplay(month: string): string {
+  public monthDayDisplay(month: string | number): string {
+
+    if (typeof month === 'number') {
+      return `${month}${this.getOrdinalSuffix(month)}`
+    }
+
     if (month === 'L') {
       return $localize `Last Day`;
     } else if (month === 'LW') {
@@ -402,47 +407,40 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     this.allForm.controls.monthsInc.setValue(x.inc, { emitEvent: false });
 
     // Day of Week
-    this.allForm.controls.day.setValue(t[5]);
-    if (t[5].match('MON')) {
-      this.allForm.controls.MON.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.MON.setValue(false, {emitEvent: false});
+    this.allForm.controls.MON.setValue(t[5].match(/(?<!#)((MON)|1)/) !== null, {emitEvent: false});
+    this.allForm.controls.TUE.setValue(t[5].match(/(?<!#)((TUE)|2)/) !== null, {emitEvent: false});
+    this.allForm.controls.WED.setValue(t[5].match(/(?<!#)((WED)|3)/) !== null, {emitEvent: false});
+    this.allForm.controls.THU.setValue(t[5].match(/(?<!#)((THU)|4)/) !== null, {emitEvent: false});
+    this.allForm.controls.FRI.setValue(t[5].match(/(?<!#)((FRI)|5)/) !== null, {emitEvent: false});
+    this.allForm.controls.SAT.setValue(t[5].match(/(?<!#)((SAT)|6)/) !== null, {emitEvent: false});
+    this.allForm.controls.SUN.setValue(t[5].match(/(?<!#)((SUN)|7)/) !== null, {emitEvent: false});
+
+    // Get value after # sign
+    const y = t[5].match(/#[0-9]*$/)
+    if (y) {
+      this.allForm.controls.monthsWeek.setValue(y[0], {emitEvent: false});
     }
 
-    if (t[5].match('TUE')) {
-      this.allForm.controls.TUE.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.TUE.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.MON.value) {
+      this.allForm.controls.day.setValue('MON', {emitEvent: false});
     }
-
-    if (t[5].match('WED')) {
-      this.allForm.controls.WED.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.WED.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.TUE.value) {
+      this.allForm.controls.day.setValue('TUE', {emitEvent: false});
     }
-
-    if (t[5].match('THU')) {
-      this.allForm.controls.THU.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.THU.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.WED.value) {
+      this.allForm.controls.day.setValue('WED', {emitEvent: false});
     }
-
-    if (t[5].match('FRI')) {
-      this.allForm.controls.FRI.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.FRI.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.THU.value) {
+      this.allForm.controls.day.setValue('THU', {emitEvent: false});
     }
-
-   if (t[5].match('SAT')) {
-      this.allForm.controls.SAT.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.SAT.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.FRI.value) {
+      this.allForm.controls.day.setValue('FRI', {emitEvent: false});
     }
-
-    if (t[5].match('SUN')) {
-      this.allForm.controls.SUN.setValue(true, {emitEvent: false});
-    } else {
-      this.allForm.controls.SUN.setValue(false, {emitEvent: false});
+    if (this.allForm.controls.SAT.value) {
+      this.allForm.controls.day.setValue('SAT', {emitEvent: false});
+    }
+    if (this.allForm.controls.SUN.value) {
+      this.allForm.controls.day.setValue('SUN', {emitEvent: false});
     }
 
     // Year
@@ -499,16 +497,23 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   }
 
 
-  private getOrdinalSuffix(value: string) {
-    if (value.length > 1) {
-      const secondToLastDigit = value.charAt(value.length - 2);
-      if (secondToLastDigit === '1') {
-        return 'th';
-      }
+  private getOrdinalSuffix(v: string | number): string {
+
+    // Convert to string. There is also a faster LOG10 algorithm, but it requires the math library.
+    let value: string;
+    if (typeof v === 'number') {
+      value = v.toString(10);
+    } else {
+      value = v;
     }
 
-    const lastDigit = value.charAt(value.length - 1);
-    switch (lastDigit) {
+    // th if secondToLastDigit is 1: ..10th, ..11th, ..19th,
+    if (value.length > 1 && value.charAt(value.length - 2) === '1') {
+        return 'th';
+    }
+
+    // Check last digit:  21st, 22nd, 23rd, 24th, 25t, etc.
+    switch (value.charAt(value.length - 1)) {
       case '1':
         return 'st';
       case '2':
