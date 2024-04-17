@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.2](https://github.com/haavardj/ngx-cron-editor/compare/v0.8.1...v0.8.2) (2024-04-17)
+
+
+### Bug Fixes
+
+* monthly localization is missing ([#33](https://github.com/haavardj/ngx-cron-editor/issues/33)) ([e159b61](https://github.com/haavardj/ngx-cron-editor/commit/e159b61b8674ed2ecd7072518570ea2c99094200))
+* parsing of monthly and yearly input expressions ([#34](https://github.com/haavardj/ngx-cron-editor/issues/34)) ([b09e77a](https://github.com/haavardj/ngx-cron-editor/commit/b09e77ae1cd6c943e2e7d19487e4f26eaf7bdb8c))
+
 ### [0.8.1](https://github.com/haavardj/ngx-cron-editor/compare/v0.8.0...v0.8.1) (2024-02-05)
 
 ## [0.8.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.7.11...v0.8.0) (2024-02-04)
