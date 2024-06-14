@@ -1,24 +1,14 @@
 {
   "name": "@vso-inc/ngx-cron-editor",
   "description": "A cron expression generator for Angular 18+ - temporary fork of ngx-cron-editor for Angular 18+ compatibility",
-  "author": "Håvard Dagenborg",
-  "contributors": [
-    "Claudiu Constantin",
-    "Eduardo Sarmiento",
-    "Aleksey Yermolenko",
-    "Ruslan Lekhman <lekhman112@gmail.com> (https://github.com/lekhmanrus)",
-    "Hannes Oswald <hannes.oswald@prolion.com>"
-  ],
+  "author": "",
+  "contributors": [],
   "version": "0.8.3",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/haavardj/ngx-cron-editor"
+    "url": "https://github.com/vso-inc/ngx-cron-editor"
   },
-  "bugs": {
-    "url": "https://github.com/haavardj/ngx-cron-editor/issues"
-  },
-  "homepage": "https://github.com/haavardj/ngx-cron-editor",
   "keywords": [
     "angular",
     "cron",
