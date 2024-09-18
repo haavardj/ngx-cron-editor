@@ -1,23 +1,20 @@
 @use '@angular/material' as mat;
+@use "ngx-cron-editor/theming" as cron-editor;
 /* You can add global styles to this file, and also import other style files */
-
 
 @include mat.core();
 
-$app-color-palettes: (
-        primary: mat.define-palette(mat.$deep-purple-palette),
-        accent:  mat.define-palette(mat.$green-palette, A200, A100, A400),
-        warn:    mat.define-palette(mat.$red-palette)
-);
+$theme: mat.define-theme((
+  color: (
+    primary: mat.$magenta-palette,
+    tertiary:  mat.$green-palette
+  )
+));
 
-$theme: mat.define-light-theme(
-    (
-      color: $app-color-palettes
-    )
-);
-
-@include mat.all-component-themes($theme);
-
+html {
+  @include mat.all-component-themes($theme);
+  @include cron-editor.cron-editor-theme($theme);
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

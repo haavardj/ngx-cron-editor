@@ -31,17 +31,17 @@
   },
   "homepage": "https://github.com/haavardj/ngx-cron-editor",
   "peerDependencies": {
-    "@angular/core": ">=15.0.0 <18.0.0",
-    "@angular/animations": ">=15.0.0 <18.0.0",
-    "@angular/common": ">=15.0.0 <18.0.0",
-    "@angular/forms": ">=15.0.0 <18.0.0",
-    "@angular/platform-browser": ">=15.0.0 <18.0.0",
-    "@angular/platform-browser-dynamic": ">=6.0.0 <18.0.0",
-    "@angular/router": ">=15.0.0 <18.0.0",
-    "@angular/material": ">=15.0.0 <18.0.0"
+    "@angular/animations": ">=15.0.0 <19.0.0",
+    "@angular/common": ">=15.0.0 <19.0.0",
+    "@angular/core": ">=15.0.0 <19.0.0",
+    "@angular/forms": ">=15.0.0 <19.0.0",
+    "@angular/material": ">=15.0.0 <19.0.0",
+    "@angular/platform-browser": ">=15.0.0 <19.0.0",
+    "@angular/platform-browser-dynamic": ">=6.0.0 <19.0.0",
+    "@angular/router": ">=15.0.0 <19.0.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.7.0"
   },
   "ngPackage": {
     "lib": {
@@ -51,5 +51,12 @@
       ]
     },
     "dest": "../../dist/libs/ngx-cron-editor"
+  },
+  "devDependencies": {
+  },
+  "exports": {
+    "./theming": {
+      "sass": "./src/cron-editor-theme.scss"
+    }
   }
 }
