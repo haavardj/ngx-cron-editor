@@ -9,7 +9,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TimePickerComponent } from './cron-time-picker.component';
 import { CronGenComponent } from './cron-editor.component';
-import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
     imports: [
@@ -21,8 +20,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
         MatSelectModule,
         MatInputModule,
         MatRadioModule,
-        MatCheckboxModule,
-        MatGridListModule
+        MatCheckboxModule
     ],
   exports: [TimePickerComponent, CronGenComponent],
   declarations: [TimePickerComponent, CronGenComponent]
