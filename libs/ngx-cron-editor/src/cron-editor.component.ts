@@ -233,7 +233,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
         this.tabIndex = 6;
         break;
       default:
-        throw Error($localize `Unknown cron type ` + this.allForm.value.cronType);
+        throw Error($localize`Unknown cron type ${this.allForm.value.cronType}`);
     }
     return cron;
   }
@@ -330,11 +330,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     }
 
     if (month === 'L') {
-      return $localize `Last Day`;
+      return $localize`Last Day`;
     } else if (month === 'LW') {
-      return $localize `Last Weekday`;
+      return $localize`Last Weekday`;
     } else if (month === '1W') {
-      return $localize `First Weekday`;
+      return $localize`First Weekday`;
     } else {
       return `${month}${this.getOrdinalSuffix(month)}`;
     }
@@ -372,11 +372,11 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
     if (!this.cronIsValid(cron)) {
       if (this.isCronFlavorQuartz) {
-        throw new Error($localize `Invalid cron expression, there must be 6 or 7 segments`);
+        throw new Error($localize`Invalid cron expression, there must be 6 or 7 segments`);
       }
 
       if (this.isCronFlavorStandard) {
-        throw new Error($localize `Invalid cron expression, there must be 5 segments`);
+        throw new Error($localize`Invalid cron expression, there must be 5 segments`);
       }
     }
 
