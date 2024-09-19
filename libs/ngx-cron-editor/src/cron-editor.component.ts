@@ -51,8 +51,6 @@ function* range(start: number, end: number) {
   providers: [CRON_VALUE_ACCESSOR]
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
-  public tabIndex = 0;
-
   @Input() public backgroundColor: ThemePalette;
   @Input() public color: ThemePalette;
 
@@ -210,27 +208,21 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
         break;
       case 'hourly':
         cron = this.computeHourlyCron();
-        this.tabIndex = 1;
         break;
       case 'daily':
         cron = this.computeDailyCron();
-        this.tabIndex = 2;
         break;
       case 'weekly':
         cron = this.computeWeeklyCron();
-        this.tabIndex = 3;
         break;
       case 'monthly':
         cron = this.computeMonthlyCron();
-        this.tabIndex = 4;
         break;
       case 'yearly':
         cron = this.computeYearlyCron();
-        this.tabIndex = 5;
         break;
       case 'unknown':
         cron = this.computeAdvancedExpression();
-        this.tabIndex = 6;
         break;
       default:
         throw Error($localize`Unknown cron type ${this.allForm.value.cronType}`);
