@@ -2,7 +2,7 @@
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "description": "A cron expression generator for Angular 15+",
   "name": "ngx-cron-editor",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/haavardj/ngx-cron-editor"
