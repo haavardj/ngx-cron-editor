@@ -39,7 +39,6 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "apps/demo/src/styles.scss"
             ],
             "scripts": [],
@@ -106,7 +105,6 @@
             "tsConfig": "apps/demo/src/tsconfig.spec.json",
             "karmaConfig": "apps/demo/src/karma.conf.js",
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "apps/demo/src/styles.scss"
             ],
             "scripts": [],
