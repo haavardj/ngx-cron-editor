@@ -21,12 +21,31 @@ export class AppComponent implements OnInit {
   cronEditorDemo2: CronGenComponent;
 
   form = this.fb.group({
-    expression: [this.cronExpression]
+    // FormControl for input
+    expressionInput: [this.cronExpression],
+    // FormControl for editor
+    expressionEditor: [this.cronExpression]
   })
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    const controlInput = this.form.get('expressionInput');
+    const controlEditor = this.form.get('expressionEditor');
+    controlInput.valueChanges
+      .subscribe(m => {
+        if (m !== controlEditor.value) {
+          // updating the editor when the input value changes
+          controlEditor.setValue(m);
+        }
+      });
+    controlEditor.valueChanges
+      .subscribe(m => {
+        if (m !== controlInput.value) {
+          // updating the input when the editor value changes
+          controlInput.setValue(m);
+        }
+      });
     // this.form.valueChanges.subscribe( val  => {console.log(JSON.stringify(val)) })
   }
 
