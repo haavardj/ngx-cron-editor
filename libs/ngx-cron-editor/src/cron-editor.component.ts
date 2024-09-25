@@ -51,6 +51,8 @@ function* range(start: number, end: number) {
   providers: [CRON_VALUE_ACCESSOR]
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
+  public tabIndex = 0;
+
   @Input() public backgroundColor: ThemePalette;
   @Input() public color: ThemePalette;
 
@@ -120,8 +122,8 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   /*
  * ControlValueAccessor
  */
-  public onChange: (value) => void
-  public onTouched: () => void;
+  public onChange: (value: any) => void = () => {};
+  public onTouched: () => void = () => {};
 
 
   get isCronFlavorQuartz() {
@@ -185,7 +187,7 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     this.allForm.controls.cronType.setValue(x);
   }
 
-  public async ngOnInit() {
+  public ngOnInit() {
     this.formSub =  this.allForm.valueChanges.pipe(debounceTime(50)).subscribe(value => {
 
       this.markAsTouched();
@@ -452,40 +454,42 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
     if (cron.match(minutesExp)) {
       this.allForm.controls.cronType.setValue('minutely', {emitEvent: false});
-
+      this.tabIndex = 0;
     } else if (cron.match(hourlyExp)) {
       this.allForm.controls.cronType.setValue('hourly', {emitEvent: false});
-
+      this.tabIndex = 1;
     } else if (cron.match(dailyExp)) {
       this.allForm.controls.cronType.setValue('daily', {emitEvent: false});
       this.allForm.controls.weekdaysOnly.setValue(false);
-
+      this.tabIndex = 2;
     } else if (cron.match(dailyWeekdayExp)) {
       this.allForm.controls.cronType.setValue('daily', {emitEvent: false});
       this.allForm.controls.weekdaysOnly.setValue(true);
-
+      this.tabIndex = 2;
     } else if (cron.match(weeklyExp)) {
       this.allForm.controls.cronType.setValue('weekly', {emitEvent: false});
-
+      this.tabIndex = 3;
     } else if (cron.match(monthlyExp)) {
       this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(false);
-
+      this.tabIndex = 4;
     } else if (cron.match(monthlyWeekdayExp)) {
       this.allForm.controls.cronType.setValue('monthly', {emitEvent: false});
       this.allForm.controls.specificWeekDay.setValue(true);
-
+      this.tabIndex = 4;
     } else if (cron.match(yearlyExp)) {
       this.allForm.controls.cronType.setValue('yearly', {emitEvent: false});
       this.allForm.controls.specificMonthWeek.setValue(false);
-
+      this.tabIndex = 5;
     } else if (cron.match(yearlyMonthWeekExp)) {
       this.allForm.controls.cronType.setValue('yearly', {emitEvent: false});
       this.allForm.controls.specificMonthWeek.setValue(true);
-
+      this.tabIndex = 5;
     } else {
       this.allForm.controls.cronType.setValue('unknown', {emitEvent: false});
+      this.tabIndex = 6;
     }
+
     this.allForm.updateValueAndValidity( {onlySelf: true});
   }
 
