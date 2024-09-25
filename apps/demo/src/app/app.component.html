@@ -24,25 +24,19 @@
     <mat-card-header class="demo-card-header">
       <mat-card-title>
         <h2 i18n>Reactive Form</h2>
-
         <mat-form-field>
           <mat-label i18n>Initial Cron</mat-label>
-          <input type="text" matInput formControlName="expression">
+          <input type="text" matInput formControlName="expressionInput">
         </mat-form-field>
-
-        <!-- Form change not emitted to cron editor without setting the expression manually. Not sure why! -->
-        <mat-button-toggle i18n (click)="form.patchValue({expression: form.value.expression})">Update</mat-button-toggle>
-
       </mat-card-title>
     </mat-card-header>
-
     <mat-card-content class="demo-card-content">
-      <cron-editor  i18n #cronEditorDemo2  formControlName="expression"  [options]="cronOptions">Cron here...</cron-editor>
+      <cron-editor i18n #cronEditorDemo2  formControlName="expressionEditor" [options]="cronOptions">Cron here...</cron-editor>
     </mat-card-content>
     <mat-card-footer class="demo-card-footer">
       <div>
         <h3>
-          <b i18n>Expression: {{this.form.controls.expression.value}}</b>
+          <b i18n>Expression: {{this.form.controls.expressionEditor.value}}</b>
         </h3>
       </div>
     </mat-card-footer>
