@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.8.4...v0.9.0) (2024-10-02)
+
+
+### Features
+
+* build with Angular 18 ([1b8f4ac](https://github.com/haavardj/ngx-cron-editor/commit/1b8f4accd90f55c6aab03b177296cd368bcda6d2))
+* move to ESLint for linting ([c58f978](https://github.com/haavardj/ngx-cron-editor/commit/c58f978413e9ebc7634ff88170da38c6a2b829b0))
+* updates for Material 2 as suggested by the ng update tool ([c66adcf](https://github.com/haavardj/ngx-cron-editor/commit/c66adcfb8d9e6445fd9b342c49a7e9d18425eb46))
+
 ### [0.8.4](https://github.com/haavardj/ngx-cron-editor/compare/v0.8.3...v0.8.4) (2024-10-01)
 
 ### [0.8.3](https://github.com/haavardj/ngx-cron-editor/compare/v0.8.2...v0.8.3) (2024-09-23)
