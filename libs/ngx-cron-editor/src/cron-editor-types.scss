@@ -3,9 +3,9 @@
 @mixin candy-carousel-typography($config) {
   .cron-editor {
     font: {
-      family: mat.font-family($config, body-1);
-      size: mat.font-size($config, body-1);
-      weight: mat.font-weight($config, body-1);
+      family: mat.m2-font-family($config, body-1);
+      size: mat.m2-font-size($config, body-1);
+      weight: mat.m2-font-weight($config, body-1);
     }
   }
 }

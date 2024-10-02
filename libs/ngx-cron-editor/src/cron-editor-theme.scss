@@ -6,7 +6,7 @@
 
   // your custom component's selector
   .cron-editor {
-    background-color: mat.get-color-from-palette($primary);
-    border-color: mat.get-color-from-palette($accent, A400);
+    background-color: mat.m2-get-color-from-palette($primary);
+    border-color: mat.m2-get-color-from-palette($accent, A400);
   }
 }
