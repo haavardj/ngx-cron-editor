@@ -1,5 +1,4 @@
 {
-  "$schema": "./node_modules/ng-packagr/package.schema.json",
   "description": "A cron expression generator for Angular 15+",
   "name": "ngx-cron-editor",
   "version": "0.8.4",
@@ -43,13 +42,5 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "ngPackage": {
-    "lib": {
-      "entryFile": "public_api.ts",
-      "styleIncludePaths": [
-        "./src"
-      ]
-    },
-    "dest": "../../dist/libs/ngx-cron-editor"
-  }
+  "sideEffects": false
 }
