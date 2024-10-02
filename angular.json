@@ -26,13 +26,16 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "localize": ["en-US"],
-            "outputPath": "dist/apps/demo",
+            "outputPath": {
+              "base": "dist/apps/demo"
+            },
             "index": "apps/demo/src/index.html",
-            "main": "apps/demo/src/main.ts",
-            "polyfills": "apps/demo/src/polyfills.ts",
+            "polyfills": [
+              "apps/demo/src/polyfills.ts"
+            ],
             "tsConfig": "apps/demo/src/tsconfig.packaged.json",
             "assets": [
               "src/favicon.ico",
@@ -43,12 +46,11 @@
               "apps/demo/src/styles.scss"
             ],
             "scripts": [],
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "apps/demo/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -68,9 +70,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
+              "extractLicenses": true
             }
           },
           "defaultConfiguration": ""
@@ -117,15 +117,14 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "apps/demo/src/tsconfig.app.json",
-              "apps/demo/src/tsconfig.spec.json"
+            "lintFilePatterns": [
+              "apps/demo/**/*.ts",
+              "apps/demo/**/*.html"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+
+            "eslintConfig": "apps/demo/src/eslint.config.js"
           }
         }
       }
@@ -180,13 +179,14 @@
         },
 
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "libs/ngx-cron-editor/tsconfig.lib.json",
-              "libs/ngx-cron-editor/tsconfig.spec.json"
+            "lintFilePatterns": [
+              "libs/ngx-cron-editor/**/*.ts",
+              "libs/ngx-cron-editor/**/*.html"
             ],
-            "exclude": []
+
+            "eslintConfig": "libs/ngx-cron-editor/eslint.config.js"
           }
         }
       }
