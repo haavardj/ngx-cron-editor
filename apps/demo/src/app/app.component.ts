@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DefaultOptions} from 'ngx-cron-editor';
 import { CronGenComponent } from 'ngx-cron-editor';
-import {FormBuilder, FormControl} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +9,7 @@ import {FormBuilder, FormControl} from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public cronExpression = '5/3 3 1/1 * *';
-  public isCronDisabled = false;
+  public cronExpression = '0/3 * 1/1 * *';
   public cronOptions = new DefaultOptions();
 
 

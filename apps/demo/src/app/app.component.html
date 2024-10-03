@@ -1,14 +1,12 @@
 <section class="mat-typography demo-container">
 
-  <h1 i18n>Angular Cron Expression Editor</h1>
+  <h2 i18n>Angular Cron Expression Editor</h2>
 
-  <mat-card class="input-cart" >
+  <mat-card>
     <mat-card-header>
-      <mat-card-title>
-        <h2 i18n>Select Type</h2>
-      </mat-card-title>
+      <mat-card-title i18n>Configuration</mat-card-title>
     </mat-card-header>
-    <mat-card-content class="input-card-content">
+    <mat-card-content>
           <mat-form-field>
             <mat-label i18n>Flavor</mat-label>
             <mat-select (change)="cronFlavorChange()" [(ngModel)]="cronOptions.cronFlavor">
@@ -16,32 +14,30 @@
               <mat-option  i18n [value]="'standard'">Standard</mat-option>
             </mat-select>
           </mat-form-field>
+
+      <form [formGroup]="form">
+        <mat-form-field>
+          <mat-label i18n>Expression</mat-label>
+          <input type="text" matInput formControlName="expressionInput">
+        </mat-form-field>
+      </form>
+
     </mat-card-content>
   </mat-card>
 
-<form>
-  <mat-card appearance="outlined" class="demo-card" [formGroup]="form">
-    <mat-card-header class="demo-card-header">
-      <mat-card-title>
-        <h2 i18n>Reactive Form</h2>
-        <mat-form-field>
-          <mat-label i18n>Initial Cron</mat-label>
-          <input type="text" matInput formControlName="expressionInput">
-        </mat-form-field>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title i18n>
+        Editor
       </mat-card-title>
     </mat-card-header>
-    <mat-card-content class="demo-card-content">
+    <mat-card-content>
+      <form [formGroup]="form">
       <cron-editor i18n #cronEditorDemo2  formControlName="expressionEditor" [options]="cronOptions">Cron here...</cron-editor>
+      </form>
     </mat-card-content>
-    <mat-card-footer class="demo-card-footer">
-      <div>
-        <h3>
-          <b i18n>Expression: {{this.form.controls.expressionEditor.value}}</b>
-        </h3>
-      </div>
-    </mat-card-footer>
   </mat-card>
-</form>
+
 
   <!--  <mat-card appearance="outlined" class="demo-card">
     <mat-card-header>

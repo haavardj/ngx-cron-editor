@@ -47,7 +47,7 @@ function* range(start: number, end: number) {
 @Component({
   selector: 'cron-editor',
   templateUrl: './cron-editor.template.html',
-  styleUrls: ['./cron-editor.component.css'],
+  styleUrls: ['./cron-editor.component.scss'],
   providers: [CRON_VALUE_ACCESSOR]
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
