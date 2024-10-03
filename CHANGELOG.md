@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.9.0...v0.10.0) (2024-10-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for styling through CronOptions and Material 2
+
+### Features
+
+* add Material 3 styling ([3f7feaa](https://github.com/haavardj/ngx-cron-editor/commit/3f7feaa82e43f4f29079b5dd3a83cfda0efe3ccc))
+
+
+### Bug Fixes
+
+* synchronize input and editor values ([e3302db](https://github.com/haavardj/ngx-cron-editor/commit/e3302dbec8f5880dfe6733faba64f4271a21e3d9)), closes [#42](https://github.com/haavardj/ngx-cron-editor/issues/42)
+
 ## [0.9.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.8.4...v0.9.0) (2024-10-02)
 
 
