@@ -6,7 +6,10 @@
     "demo": {
       "root": "apps/demo",
       "i18n": {
-        "sourceLocale": "en-US",
+        "sourceLocale": {
+          "code": "en-US",
+          "baseHref": ""
+        },
         "locales": {
           "nb": {
             "translation": [
@@ -28,7 +31,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "localize": ["en-US"],
+            "localize": ["en-US", "nb"],
             "outputPath": {
               "base": "dist/apps/demo"
             },
@@ -74,7 +77,7 @@
               "extractLicenses": true
             }
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -125,6 +128,15 @@
             ],
 
             "eslintConfig": "apps/demo/src/eslint.config.js"
+          }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "https://haavardj.github.io/ngx-cron-editor/",
+            "buildTarget": "demo:build:production",
+            "repo": "git@github.com:haavardj/ngx-cron-editor.git",
+            "dir": "dist/apps/demo/browser/en-US"
           }
         }
       }
