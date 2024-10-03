@@ -1,9 +1,0 @@
-@use '@angular/material' as mat;
-
-@mixin cron-editor-theme($theme) {
-  // your custom component's selector
-  .cron-editor {
-    background-color: mat.get-theme-color($theme, primary);
-    border-color: mat.get-theme-color($theme, secondary, 40);
-  }
-}
