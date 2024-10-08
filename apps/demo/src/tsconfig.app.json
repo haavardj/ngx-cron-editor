@@ -2,24 +2,11 @@
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../out-tsc/demo",
-    "module": "es2015",
   },
-
+  "files": [
+    "main.ts",
+  ],
   "include": [
-    "**/*.ts",
-    "**/*.html"
-  ],
-
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
-  ],
-
-  "angularCompilerOptions": {
-    "enableIvy": false,
-    "skipTemplateCodegen": true,
-    "strictMetadataEmit": true,
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true,
-  }
+    "**/*.d.ts"
+  ]
 }

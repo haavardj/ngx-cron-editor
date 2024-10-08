@@ -21,7 +21,7 @@
       },
       "sourceRoot": "src",
       "projectType": "application",
-      "prefix": "demo",
+      "prefix": "app",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
@@ -32,14 +32,13 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "localize": ["en-US", "nb"],
-            "outputPath": {
-              "base": "dist/apps/demo"
-            },
+            "outputPath": "dist/apps/demo",
             "index": "apps/demo/src/index.html",
             "polyfills": [
-              "apps/demo/src/polyfills.ts"
+              "zone.js",
+              "@angular/localize/init"
             ],
-            "tsConfig": "apps/demo/src/tsconfig.packaged.json",
+            "tsConfig": "apps/demo/src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
               "src/assets"
@@ -49,7 +48,6 @@
               "apps/demo/src/styles.scss"
             ],
             "inlineStyleLanguage": "scss",
-            "scripts": [],
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
@@ -64,17 +62,12 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "fileReplacements": [
-                {
-                  "replace": "apps/demo/src/environments/environment.ts",
-                  "with": "apps/demo/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -86,7 +79,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "demo:build"
+              "buildTarget": "demo:build:production"
+            },
+            "development": {
+              "buildTarget": "demo:build:development"
             }
           }
         },
@@ -105,18 +101,11 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "apps/demo/src/test.ts",
-            "polyfills": "apps/demo/src/polyfills.ts",
-            "tsConfig": "apps/demo/src/tsconfig.spec.json",
-            "karmaConfig": "apps/demo/src/karma.conf.js",
-            "styles": [
-              "apps/demo/src/styles.scss"
-            ],
-            "scripts": [],
-            "assets": [
-              "apps/demo/src/favicon.ico",
-              "apps/demo/src/assets"
-            ]
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+              ],
+            "tsConfig": "apps/demo/src/tsconfig.spec.json"
           }
         },
         "lint": {
@@ -167,7 +156,6 @@
             }
           }
         },
-
         "buildi8n": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
@@ -199,6 +187,16 @@
             ],
 
             "eslintConfig": "libs/ngx-cron-editor/eslint.config.js"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "libs/ngx-cron-editor/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
           }
         }
       }

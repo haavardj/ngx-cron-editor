@@ -4,17 +4,11 @@
     "outDir": "../../out-tsc/spec",
     "types": [
       "jasmine",
-      "node"
+      "@angular/localize"
     ]
   },
-  "files": [
-    "test.ts"
-  ],
   "include": [
-    "**/*.spec.ts",
-    "**/*.d.ts"
-  ],
-  "angularCompilerOptions": {
-    "enableIvy": false
-  }
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts"
+  ]
 }

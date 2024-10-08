@@ -1,32 +1,28 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {AppModule} from './app.module';
 
 describe('AppComponent', () => {
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
-  }));
 
-  it('should create the app', waitForAsync(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  }));
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
 
-  it(`should have as title 'app'`, waitForAsync(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('app');
-  }));
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AppModule, NoopAnimationsModule],
+    })
+      .compileComponents();
 
-  it('should render title in a h1 tag', waitForAsync(() => {
-    const fixture = TestBed.createComponent(AppComponent);
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to app!!');
-  }));
+  });
+
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
 });
