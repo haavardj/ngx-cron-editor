@@ -14,10 +14,10 @@ export class AppComponent implements OnInit {
 
 
   @ViewChild('cronEditorDemo1')
-  cronEditorDemo1: CronGenComponent;
+  cronEditorDemo1: CronGenComponent | undefined;
 
   @ViewChild('cronEditorDemo2')
-  cronEditorDemo2: CronGenComponent;
+  cronEditorDemo2: CronGenComponent | undefined;
 
   form = this.fb.group({
     // FormControl for input
@@ -31,6 +31,15 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     const controlInput = this.form.get('expressionInput');
     const controlEditor = this.form.get('expressionEditor');
+
+    if (!controlInput) {
+      return
+    }
+
+    if (!controlEditor) {
+      return
+    }
+
     controlInput.valueChanges
       .subscribe(m => {
         if (m !== controlEditor.value) {
@@ -38,6 +47,7 @@ export class AppComponent implements OnInit {
           controlEditor.setValue(m);
         }
       });
+
     controlEditor.valueChanges
       .subscribe(m => {
         if (m !== controlInput.value) {
@@ -49,7 +59,16 @@ export class AppComponent implements OnInit {
   }
 
   cronFlavorChange() {
-    this.cronEditorDemo1.options = this.cronOptions;
-    this.cronEditorDemo2.options = this.cronOptions;
+
+    if (this.cronEditorDemo1) {
+      this.cronEditorDemo1.options = this.cronOptions;
+    }
+
+    if (this.cronEditorDemo2) {
+      this.cronEditorDemo2.options = this.cronOptions;
+    }
+
+
+
   }
 }

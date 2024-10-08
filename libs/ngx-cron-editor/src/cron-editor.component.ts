@@ -45,6 +45,7 @@ function* range(start: number, end: number) {
 
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'cron-editor',
   templateUrl: './cron-editor.template.html',
   styleUrls: ['./cron-editor.component.scss'],
@@ -59,31 +60,31 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   @Input() public disabled = false;
   @Input() public options: CronOptions = new DefaultOptions();
 
-  public activeTab: string;
+
   public selectOptions = this.getSelectOptions();
 
   @ViewChild('minutesTab')
-  minutesTab: MatTab;
+  minutesTab: MatTab | undefined;
 
   @ViewChild('hourlyTab')
-  hourlyTab: MatTab;
+  hourlyTab: MatTab | undefined;
 
   @ViewChild('dailyTab')
-  dailyTab: MatTab;
+  dailyTab: MatTab | undefined;
 
   @ViewChild('weeklyTab')
-  weeklyTab: MatTab;
+  weeklyTab: MatTab | undefined;
 
   @ViewChild('monthlyTab')
-  monthlyTab: MatTab;
+  monthlyTab: MatTab | undefined;
 
   @ViewChild('yearlyTab')
-  yearlyTab: MatTab;
+  yearlyTab: MatTab | undefined;
 
   @ViewChild('advancedTab')
-  advancedTab: MatTab;
+  advancedTab: MatTab | undefined;
 
-  formSub: Subscription;
+  formSub: Subscription | undefined;
 
   touched = false;
   allForm = this.fb.group({
@@ -198,7 +199,9 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   }
 
   ngOnDestroy() {
-    this.formSub.unsubscribe();
+    if (this.formSub) {
+      this.formSub.unsubscribe();
+    }
   }
 
   private computeCron(): string {
@@ -242,7 +245,6 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
     const state = this.allForm.value;
 
-    // tslint:disable-next-line:max-line-length
     return `${this.isCronFlavorQuartz ? state.seconds : ''} 0/${state.minutesPer} * 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
@@ -305,10 +307,8 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.days} ${state.months} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
-  private computeAdvancedExpression(): string {
-
-    const state = this.allForm.value;
-    return state.expression;
+  private computeAdvancedExpression(): string  {
+    return this.allForm.controls.expression.value;
   }
 
   public dayDisplay(day: string): string {
