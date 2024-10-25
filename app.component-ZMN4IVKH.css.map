@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["apps/demo/src/app/app.component.scss"],
+  "sourcesContent": ["@use '@angular/material' as mat;\n\n.demo-container {\n  margin: 30px;\n}\n\n.demo-container mat-card {\n  margin-bottom: 24px;\n}\n\n.demo-container mat-card mat-card-header{\n  margin-bottom: 8px;\n}\n"],
+  "mappings": ";AAEA,CAAA;AACE,UAAA;;AAGF,CAJA,eAIA;AACE,iBAAA;;AAGF,CARA,eAQA,SAAA;AACE,iBAAA;;",
+  "names": []
+}
