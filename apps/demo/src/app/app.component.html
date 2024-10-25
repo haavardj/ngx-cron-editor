@@ -7,21 +7,32 @@
       <mat-card-title i18n>Configuration</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-          <mat-form-field>
-            <mat-label i18n>Flavor</mat-label>
-            <mat-select (change)="cronFlavorChange()" [(ngModel)]="cronOptions.cronFlavor">
-              <mat-option i18n [value]="'quartz'">Quartz</mat-option>
-              <mat-option  i18n [value]="'standard'">Standard</mat-option>
-            </mat-select>
-          </mat-form-field>
+
+      <div>
+        <mat-form-field>
+          <mat-label i18n>Flavor</mat-label>
+          <mat-select (change)="cronFlavorChange()" [(ngModel)]="cronOptions.cronFlavor">
+            <mat-option i18n [value]="'quartz'">Quartz</mat-option>
+            <mat-option  i18n [value]="'standard'">Standard</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
       <form [formGroup]="form">
-        <mat-form-field>
-          <mat-label i18n>Expression</mat-label>
-          <input type="text" matInput formControlName="expressionInput">
-        </mat-form-field>
+        <div>
+            <mat-form-field>
+              <mat-label i18n>Input</mat-label>
+              <input type="text" matInput formControlName="expressionInput">
+            </mat-form-field>
+            <button mat-button (click)="updateExpression()">Update Editor ></button>
+        </div>
+        <div>
+            <mat-form-field>
+              <mat-label i18n>Expression</mat-label>
+              <input type="text" matInput formControlName="expressionOutput">
+            </mat-form-field>
+        </div>
       </form>
-
     </mat-card-content>
   </mat-card>
 

@@ -9,7 +9,7 @@ import {FormBuilder} from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public cronExpression = '0/3 * 1/1 * *';
+  public defaultExpression = '0/3 * 1/1 * *';
   public cronOptions = new DefaultOptions();
 
 
@@ -20,16 +20,23 @@ export class AppComponent implements OnInit {
   cronEditorDemo2: CronGenComponent | undefined;
 
   form = this.fb.group({
+
     // FormControl for input
-    expressionInput: [this.cronExpression],
+    expressionInput: [this.defaultExpression],
+
+    // FormControl for output
+    expressionOutput: [this.defaultExpression],
+
     // FormControl for editor
-    expressionEditor: [this.cronExpression]
+    expressionEditor: [this.defaultExpression]
   })
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+  }
 
   ngOnInit(): void {
     const controlInput = this.form.get('expressionInput');
+    const controlOutput = this.form.get('expressionOutput');
     const controlEditor = this.form.get('expressionEditor');
 
     if (!controlInput) {
@@ -40,22 +47,21 @@ export class AppComponent implements OnInit {
       return
     }
 
-    controlInput.valueChanges
+    controlOutput.valueChanges
       .subscribe(m => {
         if (m !== controlEditor.value) {
-          // updating the editor when the input value changes
+          // updating the input when the editor value changes
           controlEditor.setValue(m);
         }
       });
 
     controlEditor.valueChanges
       .subscribe(m => {
-        if (m !== controlInput.value) {
+        if (m !== controlOutput.value) {
           // updating the input when the editor value changes
-          controlInput.setValue(m);
+          controlOutput.setValue(m);
         }
       });
-    // this.form.valueChanges.subscribe( val  => {console.log(JSON.stringify(val)) })
   }
 
   cronFlavorChange() {
@@ -67,8 +73,14 @@ export class AppComponent implements OnInit {
     if (this.cronEditorDemo2) {
       this.cronEditorDemo2.options = this.cronOptions;
     }
+  }
 
+  updateExpression() {
 
+    // const controlInput = this.form.get('expressionInput');
+    const controlEditor = this.form.get('expressionEditor');
+    const controlInput = this.form.get('expressionInput');
 
+    controlEditor.setValue(controlInput.getRawValue());
   }
 }
