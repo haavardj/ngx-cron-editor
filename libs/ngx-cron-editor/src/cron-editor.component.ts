@@ -424,6 +424,21 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     this.allForm.controls.FRI.setValue(t[5].match(/(?<!#)((FRI)|5)/) !== null, {emitEvent: false});
     this.allForm.controls.SAT.setValue(t[5].match(/(?<!#)((SAT)|6)/) !== null, {emitEvent: false});
 
+    // Weekdays
+    if ((t[5].match(/(?<!#)(MON-FRI)/))) {
+      this.allForm.controls.MON.setValue(true);
+      this.allForm.controls.TUE.setValue(true);
+      this.allForm.controls.WED.setValue(true);
+      this.allForm.controls.THU.setValue(true);
+      this.allForm.controls.FRI.setValue(true);
+    }
+
+    // Weekends
+    if ((t[5].match(/(?<!#)(SAT-SUN)/))) {
+      this.allForm.controls.SAT.setValue(true);
+      this.allForm.controls.SUN.setValue(true);
+    }
+
 
     // Get value after # sign
     const y = t[5].match(/#[0-9]*$/)
