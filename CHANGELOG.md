@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.1](https://github.com/haavardj/ngx-cron-editor/compare/v0.10.0...v0.10.1) (2024-10-25)
+
+
+### Features
+
+* **demo:** add input expression that does not update with editor ([1469ad7](https://github.com/haavardj/ngx-cron-editor/commit/1469ad7033b60c65ce47b07bcf108f2f3bb2634b))
+* **editor:** parse MON-FRI day ranges ([140c217](https://github.com/haavardj/ngx-cron-editor/commit/140c2174b70b92d9b15b2495e58c1babcc5a6160)), closes [#35](https://github.com/haavardj/ngx-cron-editor/issues/35)
+
+
+### Bug Fixes
+
+* missing checks for uninitialized class properties ([0626119](https://github.com/haavardj/ngx-cron-editor/commit/06261195776dde81c4733df493af74ce4fef2966))
+
 ## [0.10.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.9.0...v0.10.0) (2024-10-03)
 
 
