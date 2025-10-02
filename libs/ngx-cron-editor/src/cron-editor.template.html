@@ -1,4 +1,4 @@
-  <mat-tab-group (selectedTabChange)="onTabChange($event)" [(selectedIndex)]="tabIndex">
+  <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="tabIndex">
 
     <!-- Minute -->
     <mat-tab [formGroup]="allForm"  i18n-label label="Minutely" *ngIf="!options.hideMinutesTab" #minutesTab>
