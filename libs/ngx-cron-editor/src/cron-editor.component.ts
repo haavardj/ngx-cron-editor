@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy} from '@angular/core';
+import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren, QueryList} from '@angular/core';
 import {CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
@@ -62,6 +62,8 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
 
   public selectOptions = this.getSelectOptions();
+
+  @ViewChildren(MatTab) tabs!: QueryList<MatTab>;
 
   @ViewChild('minutesTab')
   minutesTab: MatTab | undefined;
@@ -210,30 +212,31 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     switch (this.allForm.value.cronType) {
       case 'minutely':
         cron = this.computeMinutesCron();
+        this.tabIndex = this.tabs.toArray().indexOf(this.minutesTab);
         break;
       case 'hourly':
         cron = this.computeHourlyCron();
-        this.tabIndex = 1;
+        this.tabIndex = this.tabs.toArray().indexOf(this.hourlyTab);
         break;
       case 'daily':
         cron = this.computeDailyCron();
-        this.tabIndex = 2;
+        this.tabIndex = this.tabs.toArray().indexOf(this.dailyTab);
         break;
       case 'weekly':
         cron = this.computeWeeklyCron();
-        this.tabIndex = 3;
+        this.tabIndex = this.tabs.toArray().indexOf(this.weeklyTab);
         break;
       case 'monthly':
         cron = this.computeMonthlyCron();
-        this.tabIndex = 4;
+        this.tabIndex = this.tabs.toArray().indexOf(this.monthlyTab);
         break;
       case 'yearly':
         cron = this.computeYearlyCron();
-        this.tabIndex = 5;
+        this.tabIndex = this.tabs.toArray().indexOf(this.yearlyTab);
         break;
       case 'unknown':
         cron = this.computeAdvancedExpression();
-        this.tabIndex = 6;
+        this.tabIndex = this.tabs.length - 1;
         break;
       default:
         throw Error($localize`Unknown cron type ${this.allForm.value.cronType}`);
