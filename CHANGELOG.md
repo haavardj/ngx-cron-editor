@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.2](https://github.com/haavardj/ngx-cron-editor/compare/v0.10.1...v0.10.2) (2025-11-05)
+
+
+### Bug Fixes
+
+* set the correct tabIndex using the MatTab array ([#47](https://github.com/haavardj/ngx-cron-editor/issues/47)) ([79b22cd](https://github.com/haavardj/ngx-cron-editor/commit/79b22cd7e2aa95bd23213f5e92abe82272fbb970))
+
 ### [0.10.1](https://github.com/haavardj/ngx-cron-editor/compare/v0.10.0...v0.10.1) (2024-10-25)
 
 
