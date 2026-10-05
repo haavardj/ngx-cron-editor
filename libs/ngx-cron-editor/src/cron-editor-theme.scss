@@ -1,9 +1,22 @@
+@use 'sass:map';
+@use 'sass:meta';
 @use '@angular/material' as mat;
 
 @mixin cron-editor-theme($theme) {
-  // your custom component's selector
   .cron-editor {
-    background-color: mat.get-theme-color($theme, primary);
-    border-color: mat.get-theme-color($theme, secondary, 40);
+    @if map.has-key($theme, color) {
+      $colors: map.get($theme, color);
+
+      @if meta.function-exists('get-theme-color', $module: 'mat') {
+        background-color: mat.get-theme-color($theme, primary, 500);
+        border-color: mat.get-theme-color($theme, accent, 500);
+      } @else {
+        background-color: mat.get-color-from-palette(map.get($colors, primary));
+        border-color: mat.get-color-from-palette(map.get($colors, accent));
+      }
+    } @else {
+      background-color: mat.get-theme-color($theme, primary);
+      border-color: mat.get-theme-color($theme, secondary, 40);
+    }
   }
 }

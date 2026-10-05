@@ -1,13 +1,27 @@
 ngx-cron-editor
 ===
 
-An Angular 15+ component for building cron expressions graphically. It is meant
+An Angular 15–22 component for building cron expressions graphically. It is meant
 to be used in reactive forms and support Angular Material Design styling.
  
 
 ## Demo
 
 A work-in-progress demo can be found [here](https://haavardj.github.io/ngx-cron-editor/)
+
+## Development
+
+This repository uses [mise](https://mise.jdx.dev/) to pin Node.js and set
+project environment variables. Trust the project config with `mise trust`,
+then run `mise install` and `mise run install` to install the locked
+dependencies. Use `mise run start`, `mise run build`, or `mise run test` for the
+existing project commands.
+
+The library supports Angular 15–22. Run the manually invoked matrix with
+`mise run compat`. For a package tarball that supports the full range, run
+`mise run release-package` after the matrix; it writes the Angular 15-built
+package to `dist/release`. Results and maintenance notes are in
+[the Angular support plan](docs/angular-support-plan.md).
 
 ## Usage
 

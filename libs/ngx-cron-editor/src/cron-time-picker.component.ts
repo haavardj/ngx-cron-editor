@@ -16,6 +16,7 @@ function* range(start: number, end: number) {
 
 @Component({
   selector: 'cron-time-picker',
+  standalone: false,
   templateUrl: './cron-time-picker.template.html',
   providers: []
 })
@@ -42,5 +43,4 @@ export class TimePickerComponent implements OnInit {
     this.allForm = this.parent.control as FormGroup;
   }
 }
-
 

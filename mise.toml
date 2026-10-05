@@ -1,0 +1,21 @@
+[tools]
+node = "22.22.3"
+
+[env]
+NG_CLI_ANALYTICS = "false"
+
+[tasks.install]
+description = "Install dependencies from package-lock.json"
+run = "npm ci"
+
+[tasks.start]
+description = "Start the Angular demo"
+run = "npm run start"
+
+[tasks.build]
+description = "Build the Angular demo"
+run = "npm run build"
+
+[tasks.test]
+description = "Run the existing Angular test suite once"
+run = "npm test -- --watch=false"

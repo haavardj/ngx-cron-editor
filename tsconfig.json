@@ -1,8 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-  //  "strict": true,
-    "baseUrl": "./",
+    "strict": false,
     "outDir": "./dist/out-tsc",
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

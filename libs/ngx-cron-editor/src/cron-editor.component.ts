@@ -47,6 +47,7 @@ function* range(start: number, end: number) {
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'cron-editor',
+  standalone: false,
   templateUrl: './cron-editor.template.html',
   styleUrls: ['./cron-editor.component.scss'],
   providers: [CRON_VALUE_ACCESSOR]

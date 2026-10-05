@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.10.2...v0.11.0) (2026-10-01)
+
+### Features
+
+* support Angular 15–22 with a manually invoked compatibility matrix
+
+### Bug Fixes
+
+* support Angular 19+ NgModule declarations and Material 2/3 theme Sass APIs
+
 ### [0.10.2](https://github.com/haavardj/ngx-cron-editor/compare/v0.10.1...v0.10.2) (2025-11-05)
 
 
