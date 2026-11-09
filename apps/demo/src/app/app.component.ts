@@ -11,7 +11,7 @@ import {FormBuilder} from '@angular/forms';
     standalone: false
 })
 export class AppComponent implements OnInit {
-  public defaultExpression = '0/3 * 1/1 * *';
+  public defaultExpression = '*/3 * * * *';
   public cronOptions = new DefaultOptions();
 
 

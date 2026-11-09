@@ -42,7 +42,7 @@ import { CronEditorModule } from 'ngx-cron-editor';
   template: `<cron-editor [formControl]="cron"></cron-editor>`,
 })
 export class ScheduleComponent {
-  cron = new FormControl('0 0 1/1 * *');
+  cron = new FormControl('0 0 * * *');
 }
 ```
 
@@ -61,6 +61,12 @@ option. The default is `standard`.
 
 Quartz uses `?` for the day field that is not set. The form control's value
 must match the flavor; see [Validation](#validation).
+
+Repeating schedules are written as steps. In `standard` the editor writes
+`*/15` (every 15 minutes), which cronie, Vixie cron and Kubernetes accept; it
+also reads the older `0/15` form. In `quartz` it writes `0/15`, as the Quartz
+documentation does. A day step such as `*/3` restarts each month (1st, 4th, …,
+31st, then the 1st again), as in every cron implementation.
 
 ## Options
 

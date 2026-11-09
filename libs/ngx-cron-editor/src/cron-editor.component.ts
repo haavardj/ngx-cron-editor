@@ -7,15 +7,18 @@ import {debounceTime, Subscription } from 'rxjs';
 
 type CronType = 'minutely' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'unknown';
 
-const minutesExp = /\d+ 0\/\d+ \* 1\/1 \* [\?\*] \*/;
-const hourlyExp = /\d+ \d+ 0\/\d+ 1\/1 \* [\?\*] \*/;
-const dailyExp = /\d+ \d+ \d+ 1\/\d+ \* [\?\*] \*/;
-const dailyWeekdayExp = /\d+ \d+ \d+ [\?\*] \* MON-FRI \*/;
-const weeklyExp = /\d+ \d+ \d+ [\?\*] \* (MON|TUE|WED|THU|FRI|SAT|SUN)(,(MON|TUE|WED|THU|FRI|SAT|SUN))* \*/;
-const monthlyExp = /\d+ \d+ \d+ (\d+|L|LW|1W) 1\/\d+ [\?\*] \*/;
-const monthlyWeekdayExp = /\d+ \d+ \d+ [\?\*] 1\/\d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
-const yearlyExp  = /\d+ \d+ \d+ (\d+|L|LW|1W) \d+ [\?\*] \*/;
-const yearlyMonthWeekExp = /\d+ \d+ \d+ [\?\*] \d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*/;
+// Matched against the normalized 7-field form (seconds ... year), after `*/n` has
+// been rewritten to `0/n` (minutes, hours) or `1/n` (days, months). A lone `*`
+// in a step position means a step of 1, as the editor writes for standard cron.
+const minutesExp = /^\d+ (0\/\d+|\*) \* (1\/1|\*) \* [\?\*] \*$/;
+const hourlyExp = /^\d+ \d+ (0\/\d+|\*) (1\/1|\*) \* [\?\*] \*$/;
+const dailyExp = /^\d+ \d+ \d+ (1\/\d+|\*) \* [\?\*] \*$/;
+const dailyWeekdayExp = /^\d+ \d+ \d+ [\?\*] \* MON-FRI \*$/;
+const weeklyExp = /^\d+ \d+ \d+ [\?\*] \* (MON|TUE|WED|THU|FRI|SAT|SUN)(,(MON|TUE|WED|THU|FRI|SAT|SUN))* \*$/;
+const monthlyExp = /^\d+ \d+ \d+ (\d+|L|LW|1W) (1\/\d+|\*) [\?\*] \*$/;
+const monthlyWeekdayExp = /^\d+ \d+ \d+ [\?\*] (1\/\d+|\*) (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*$/;
+const yearlyExp  = /^\d+ \d+ \d+ (\d+|L|LW|1W) \d+ [\?\*] \*$/;
+const yearlyMonthWeekExp = /^\d+ \d+ \d+ [\?\*] \d+ (MON|TUE|WED|THU|FRI|SAT|SUN)((#[1-5])|L) \*$/;
 
 export const CRON_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -42,14 +45,14 @@ export interface CronSegmentsError {
 
 interface CronToken {
   val: string;
-  /** Step after '/', or null when the token has none (e.g. '15' or '*'). */
+  /** Step after '/'; '1' for a lone '*' (every value); null for a plain value such as '15'. */
   inc: string | null;
 }
 
 function parseCronNumberToken(val: string): CronToken {
   const v = val.split('/');
   if (v.length === 1) {
-    return {val: v[0], inc: null};
+    return {val: v[0], inc: v[0] === '*' ? '1' : null};
   }
   return {val: v[0], inc: v[1]}
 }
@@ -290,14 +293,14 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
 
     const state = this.allForm.value;
 
-    return `${this.isCronFlavorQuartz ? state.seconds : ''} 0/${state.minutesPer} * 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${this.step(0, state.minutesPer)} * ${this.step(1, 1)} * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
   private computeHourlyCron(): string {
 
     const state = this.allForm.value;
 
-    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} 0/${state.hoursPer} 1/1 * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.step(0, state.hoursPer)} ${this.step(1, 1)} * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
   }
 
   private computeDailyCron(): string {
@@ -311,7 +314,7 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
 
     const state = this.allForm.value;
 
-    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} 1/${state.daysPer} * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.step(1, state.daysPer)} * ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
 
   }
 
@@ -338,9 +341,21 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
     const state = this.allForm.value;
 
     if (state.specificWeekDay) {
-      return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.monthDayDefaultChar} 1/${state.monthsInc} ${state.day}${state.monthsWeek} ${this.yearDefaultChar}`.trim();
+      return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${this.monthDayDefaultChar} ${this.step(1, state.monthsInc)} ${state.day}${state.monthsWeek} ${this.yearDefaultChar}`.trim();
     }
-    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.days} 1/${state.monthsInc} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+    return `${this.isCronFlavorQuartz ? state.seconds : ''} ${state.minutes} ${this.hourToCron(state.hours, state.hoursType)} ${state.days} ${this.step(1, state.monthsInc)} ${this.weekDayDefaultChar} ${this.yearDefaultChar}`.trim();
+  }
+
+  /* A field that repeats every `n` units from the field's first value (0 for
+   * minutes and hours, 1 for days and months).
+   * Quartz: `start/n` (Quartz's documented form, e.g. '0/15').
+   * Standard: `*\/n`, or `*` for n = 1. cronie and Vixie cron only allow a
+   * step after '*' or a range, so `0/15` or `1/1` would be a syntax error there. */
+  private step(start: 0 | 1, n: string | number): string {
+    if (this.isCronFlavorQuartz) {
+      return `${start}/${n}`;
+    }
+    return String(n) === '1' ? '*' : `*/${n}`;
   }
 
   private computeYearlyCron(): string {
@@ -435,6 +450,13 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
     if (cron.split(' ').length === 5 && this.isCronFlavorStandard) {
       cron = `0 ${cron} *`;
     }
+
+    // Rewrite `*/n` to the field's first value: `0/n` for minutes and hours,
+    // `1/n` for day of month and month. Both forms select the same values.
+    const fieldStart = ['0', '0', '0', '1', '1'];  // seconds, minutes, hours, day of month, month
+    cron = cron.split(' ')
+      .map((token, i) => i < fieldStart.length && token.startsWith('*/') ? `${fieldStart[i]}${token.slice(1)}` : token)
+      .join(' ');
 
     // Parse cron tokens
     const t = cron.split(' ');

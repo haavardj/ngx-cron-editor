@@ -63,13 +63,13 @@ describe('CronGenComponent in a form (standard flavor)', () => {
   }
 
   const cases: [string, string][] = [
-    ['0/5 * 1/1 * *', 'Minutely'],
-    ['30 0/2 1/1 * *', 'Hourly'],
-    ['30 10 1/3 * *', 'Daily'],
+    ['*/5 * * * *', 'Minutely'],
+    ['30 */2 * * *', 'Hourly'],
+    ['30 10 */3 * *', 'Daily'],
     ['30 10 * * MON-FRI', 'Daily'],
     ['30 10 * * MON,WED', 'Weekly'],
-    ['30 10 15 1/2 *', 'Monthly'],
-    ['30 10 * 1/2 TUE#2', 'Monthly'],
+    ['30 10 15 */2 *', 'Monthly'],
+    ['30 10 * */2 TUE#2', 'Monthly'],
     ['30 10 15 6 *', 'Yearly'],
     ['1 2 3 4 5', 'Advanced'],
   ];
@@ -92,7 +92,7 @@ describe('CronGenComponent in a form (standard flavor)', () => {
 
     expect(selectedTabLabel()).toBe('Daily');
     // '15' has no step, so the Daily step stays at its default of 1 (was '1/0').
-    expect(host.cron.value).toBe('30 10 1/1 * *');
+    expect(host.cron.value).toBe('30 10 * * *');
   }));
 
   function clickTab(label: string) {
@@ -106,10 +106,10 @@ describe('CronGenComponent in a form (standard flavor)', () => {
   // Without a value, every tab must emit a usable expression: no step of 0,
   // no day-of-month 0 and no month 0.
   const defaults: [string, string][] = [
-    ['Minutely', '0/1 * 1/1 * *'],
-    ['Hourly', '0 0/1 1/1 * *'],
-    ['Daily', '0 0 1/1 * *'],
-    ['Monthly', '0 0 1 1/1 *'],
+    ['Minutely', '* * * * *'],
+    ['Hourly', '0 * * * *'],
+    ['Daily', '0 0 * * *'],
+    ['Monthly', '0 0 1 * *'],
     ['Yearly', '0 0 1 1 *'],
   ];
   for (const [tab, expected] of defaults) {
@@ -129,11 +129,29 @@ describe('CronGenComponent in a form (standard flavor)', () => {
   });
 
   it('keeps a parsed step when switching back to its tab', fakeAsync(() => {
-    load('0/15 * 1/1 * *');
+    load('*/15 * * * *');
     clickTab('Hourly');
     clickTab('Minutely');
-    expect(host.cron.value).toBe('0/15 * 1/1 * *');
+    expect(host.cron.value).toBe('*/15 * * * *');
   }));
+
+  // Older versions wrote steps as `0/n` and `1/n`, which cronie and Vixie cron
+  // reject. The editor still reads them and writes the portable `*/n` form.
+  const legacy: [string, string, string][] = [
+    ['0/5 * 1/1 * *', 'Minutely', '*/5 * * * *'],
+    ['30 0/2 1/1 * *', 'Hourly', '30 */2 * * *'],
+    ['30 10 1/3 * *', 'Daily', '30 10 */3 * *'],
+    ['30 10 1/1 * *', 'Daily', '30 10 * * *'],
+    ['30 10 15 1/2 *', 'Monthly', '30 10 15 */2 *'],
+    ['30 10 * 1/2 TUE#2', 'Monthly', '30 10 * */2 TUE#2'],
+  ];
+  for (const [input, tab, output] of legacy) {
+    it(`reads legacy "${input}" as ${tab} and writes "${output}"`, fakeAsync(() => {
+      load(input);
+      expect(selectedTabLabel()).toBe(tab);
+      expect(host.cron.value).toBe(output);
+    }));
+  }
 
   it('is valid for an expression with the right segment count', fakeAsync(() => {
     load('30 10 * * MON-FRI');
@@ -217,6 +235,32 @@ describe('CronGenComponent with an initial value (quartz flavor)', () => {
     expect(checked[0].textContent).toContain('Week Day (MON-FRI)');
     expect(fixture.componentInstance.cron.value).toBe('3 5 1 ? * MON-FRI *');
   }));
+
+  // Quartz documents steps as `start/n` ('0/15'), so quartz output keeps that form.
+  const quartzCases: [string, string][] = [
+    ['0 0/5 * 1/1 * ? *', 'Minutely'],
+    ['0 30 0/2 1/1 * ? *', 'Hourly'],
+    ['0 30 10 1/3 * ? *', 'Daily'],
+    ['0 30 10 15 1/2 ? *', 'Monthly'],
+  ];
+  for (const [expression, tab] of quartzCases) {
+    it(`round-trips quartz "${expression}" (${tab})`, fakeAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [QuartzHostComponent, NoopAnimationsModule],
+      });
+      const fixture = TestBed.createComponent(QuartzHostComponent);
+      fixture.componentInstance.cron.setValue(expression);
+      for (let i = 0; i < 2; i++) {
+        fixture.detectChanges();
+        tick(600);
+      }
+      fixture.detectChanges();
+
+      const selected: HTMLElement = fixture.nativeElement.querySelector('[role="tab"][aria-selected="true"]');
+      expect(selected.textContent?.trim()).toBe(tab);
+      expect(fixture.componentInstance.cron.value).toBe(expression);
+    }));
+  }
 
   it('revalidates when the flavor is changed in place', fakeAsync(() => {
     TestBed.configureTestingModule({
