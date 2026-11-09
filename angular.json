@@ -19,7 +19,7 @@
           }
         }
       },
-      "sourceRoot": "src",
+      "sourceRoot": "apps/demo/src",
       "projectType": "application",
       "prefix": "app",
       "schematics": {

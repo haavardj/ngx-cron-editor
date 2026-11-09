@@ -4,6 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CronGenComponent } from './cron-editor.component';
 import { CronEditorModule } from './cron-editor.module';
+import { CronOptions, DefaultOptions } from './CronOptions';
 
 describe('CronGenComponent', () => {
   let component: CronGenComponent;
@@ -91,5 +92,47 @@ describe('CronGenComponent in a form (standard flavor)', () => {
 
     expect(selectedTabLabel()).toBe('Daily');
     expect(host.cron.value).toMatch(/^30 10 1\/\d+ \* \*$/);
+  }));
+
+  it('defaults the Daily tab to "Every N day(s)" when there is no value', fakeAsync(() => {
+    const tabs: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
+    tabs.find(t => t.textContent?.trim() === 'Daily')!.click();
+    fixture.detectChanges();
+    tick(600);
+    fixture.detectChanges();
+
+    const checked: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-radio-button.mat-mdc-radio-checked'));
+    expect(checked.length).toBe(1);
+    expect(checked[0].textContent).toContain('Day(s)');
+  }));
+});
+
+@Component({
+  template: '<cron-editor [formControl]="cron" [options]="options"></cron-editor>',
+  imports: [CronEditorModule, ReactiveFormsModule],
+})
+class QuartzHostComponent {
+  options: CronOptions = {...new DefaultOptions(), cronFlavor: 'quartz'};
+  cron = new FormControl<string | null>('3 5 1 ? * MON-FRI *');
+}
+
+describe('CronGenComponent with an initial value (quartz flavor)', () => {
+  // Issue #35: the Daily tab showed "Every N day(s)" selected for a MON-FRI expression.
+  it('checks the "Week Day (MON-FRI)" radio for an initial MON-FRI expression', fakeAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [QuartzHostComponent, NoopAnimationsModule],
+    });
+    const fixture = TestBed.createComponent(QuartzHostComponent);
+    fixture.detectChanges();
+    tick(600);
+    fixture.detectChanges();
+
+    const tab: HTMLElement = fixture.nativeElement.querySelector('[role="tab"][aria-selected="true"]');
+    expect(tab.textContent?.trim()).toBe('Daily');
+
+    const checked: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-radio-button.mat-mdc-radio-checked'));
+    expect(checked.length).toBe(1);
+    expect(checked[0].textContent).toContain('Week Day (MON-FRI)');
+    expect(fixture.componentInstance.cron.value).toBe('3 5 1 ? * MON-FRI *');
   }));
 });
