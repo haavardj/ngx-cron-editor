@@ -19,7 +19,8 @@ Angular 22 (Material 22, TypeScript 6). The library's peer range is `>=22 <23`; 
 
 ```sh
 ng build ngx-cron-editor                # build library to dist/libs/ngx-cron-editor
-ng build ngx-cron-editor -c production  # production library build (used for publishing)
+npm run build:lib                       # production library build + copy README.md/LICENSE.md into dist (use for publishing)
+npm run pack:lib                        # build:lib, then npm pack the dist folder
 ng serve demo                           # run demo app
 ng test ngx-cron-editor                 # Karma/Jasmine tests for the library
 ng test demo
@@ -48,7 +49,9 @@ Flavor differences are centralized in the getters `isCronFlavorQuartz`, `yearDef
 
 `enums.ts` holds day, month-week and month labels; user-facing strings use `$localize`. Norwegian (`nb`) translation files exist for library and demo, but they use legacy SHA-1 message IDs while `enableI18nLegacyMessageIdFormat` is `false`, so the `nb` build reports missing translations. `extract-i18n` only works for the demo (library projects are unsupported), and re-extracting drops the legacy entries.
 
-Theming: `src/cron-editor-theme.scss` is exported as `ngx-cron-editor/theming`. The `cron-editor-theme($theme)` mixin accepts Material 3 and Material 2 themes (branches on `mat.get-theme-version`). Nothing in the repo compiles it; test it with `npx sass --load-path=node_modules --load-path=libs/ngx-cron-editor/src <file>.scss`.
+Theming: there is no theme mixin. The editor is built from Material components, which follow the app's theme through Material 22's `--mat-sys-*` CSS variables. If the editor's own stylesheet ever needs colors, use those variables (e.g. `var(--mat-sys-on-surface)`) rather than a Sass mixin taking a theme map.
+
+Documentation: the root `README.md` is the only README. It is what GitHub shows, and `build:lib` copies it (and `LICENSE.md`) into the npm package, because ng-packagr refuses assets outside the library folder.
 
 ## Releases
 

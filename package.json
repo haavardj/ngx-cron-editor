@@ -32,10 +32,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "copyhtml": "copy 'src/app/cron-editor/*.html' './components/cron-editor/'",
-    "copycss": "copy 'src/app/cron-editor/*.css' './components/cron-editor/'",
-    "pack": "ng-packagr -p package.json & cd dist & npm pack"
+    "build:lib": "ng build ngx-cron-editor -c production && node -e \"for (const f of ['README.md','LICENSE.md']) require('fs').copyFileSync(f, 'dist/libs/ngx-cron-editor/' + f)\"",
+    "pack:lib": "npm run build:lib && npm pack ./dist/libs/ngx-cron-editor"
   },
   "dependencies": {
     "@angular/animations": "^22.2.5",
