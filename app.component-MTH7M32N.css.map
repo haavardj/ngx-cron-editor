@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["apps/demo/src/app/app.component.scss"],
+  "sourcesContent": ["@use '@angular/material' as mat;\r\n\r\n.demo-container {\r\n  margin: 30px;\r\n}\r\n\r\n.demo-container mat-card {\r\n  margin-bottom: 24px;\r\n}\r\n\r\n.demo-container mat-card mat-card-header{\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.demo-error {\r\n  color: var(--mat-sys-error, #ba1a1a);\r\n}\r\n"],
+  "mappings": ";AAEA,CAAA;AACE,UAAA;;AAGF,CAJA,eAIA;AACE,iBAAA;;AAGF,CARA,eAQA,SAAA;AACE,iBAAA;;AAGF,CAAA;AACE,SAAA,IAAA,eAAA,EAAA;;",
+  "names": []
+}
