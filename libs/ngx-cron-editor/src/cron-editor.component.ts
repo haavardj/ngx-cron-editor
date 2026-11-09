@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren, QueryList, ChangeDetectionStrategy} from '@angular/core';
+import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, inject} from '@angular/core';
 import {CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
@@ -151,6 +151,8 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     return this.options.cronFlavor === 'quartz' ? '?' : '*';
   }
 
+  private readonly cdr = inject(ChangeDetectorRef);
+
   constructor(private fb: FormBuilder) {
   }
 
@@ -197,8 +199,10 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
       this.markAsTouched();
       const cron = this.computeCron();
-      // this.allForm.controls.expression.setValue(cron, {emitEvent: false});
       this.onChange(cron);
+      // computeCron() may change tabIndex outside change detection. Without this,
+      // an OnPush parent (the Angular 22 default) never re-checks the editor.
+      this.cdr.markForCheck();
     });
   }
 

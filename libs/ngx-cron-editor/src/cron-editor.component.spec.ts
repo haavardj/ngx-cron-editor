@@ -94,6 +94,15 @@ describe('CronGenComponent in a form (standard flavor)', () => {
     expect(host.cron.value).toMatch(/^30 10 1\/\d+ \* \*$/);
   }));
 
+  // The host is OnPush (the Angular 22 default). The editor must mark itself for
+  // check when a later value changes the tab, or the tab group never sees it.
+  it('switches tab for a later value inside an OnPush parent', fakeAsync(() => {
+    load('0/5 * 1/1 * *');
+    expect(selectedTabLabel()).toBe('Minutely');
+    load('1 2 3 4 5');
+    expect(selectedTabLabel()).toBe('Advanced');
+  }));
+
   it('defaults the Daily tab to "Every N day(s)" when there is no value', fakeAsync(() => {
     const tabs: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
     tabs.find(t => t.textContent?.trim() === 'Daily')!.click();
