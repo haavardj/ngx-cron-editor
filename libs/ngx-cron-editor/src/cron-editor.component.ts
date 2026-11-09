@@ -42,13 +42,14 @@ export interface CronSegmentsError {
 
 interface CronToken {
   val: string;
-  inc: string;
+  /** Step after '/', or null when the token has none (e.g. '15' or '*'). */
+  inc: string | null;
 }
 
 function parseCronNumberToken(val: string): CronToken {
   const v = val.split('/');
   if (v.length === 1) {
-    return {val: v[0], inc: '0'};
+    return {val: v[0], inc: null};
   }
   return {val: v[0], inc: v[1]}
 }
@@ -110,17 +111,17 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
     seconds: ['0'],
 
     minutes: ['0'],
-    minutesPer: ['0'],
+    minutesPer: ['1'],
 
     hours: [this.getAmPmHour('0')],
-    hoursPer: ['0'],
+    hoursPer: ['1'],
     hoursType: [this.getHourType('0')],
 
-    days: ['0'],  // Days of Month, 1, 2, 31....
-    daysPer: ['0'],
+    days: ['1'],  // Days of Month, 1, 2, 31....
+    daysPer: ['1'],
 
-    months: ['0'],
-    monthsInc: ['0'],
+    months: ['1'],
+    monthsInc: ['1'],
 
     day: ['MON'], // Day of week '1' or 'MON;
     monthsWeek: ['#1'],
@@ -135,7 +136,7 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
     FRI: [true],
     SAT: [true],
     SUN: [true],
-    expression: ['0 0 0 0 0']
+    expression: ['']
   });
 
   /*
@@ -441,26 +442,38 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
     // Seconds
     this.allForm.controls.seconds.setValue(t[0], {emitEvent: false})
 
+    // Steps (minutesPer, hoursPer, daysPer, monthsInc) are only updated when the
+    // token has a '/'. Otherwise they keep their current value (default 1), so
+    // switching to a tab that uses a step never produces a step of 0.
+
     // Minutes
     let x = parseCronNumberToken(t[1]);
-    this.allForm.controls.minutesPer.setValue(x.inc, {emitEvent: false});
+    if (x.inc !== null) {
+      this.allForm.controls.minutesPer.setValue(x.inc, {emitEvent: false});
+    }
     this.allForm.controls.minutes.setValue(x.val);
 
     // Hours
     x = parseCronNumberToken(t[2])
-    this.allForm.controls.hoursPer.setValue(x.inc);
+    if (x.inc !== null) {
+      this.allForm.controls.hoursPer.setValue(x.inc);
+    }
     this.allForm.controls.hours.setValue(x.val);
     this.allForm.controls.hoursType.setValue(this.getHourType(this.allForm.value.hours), {emitEvent: false});
 
     // Day of Month
     x = parseCronNumberToken(t[3])
     this.allForm.controls.days.setValue(x.val, {emitEvent: false});
-    this.allForm.controls.daysPer.setValue(x.inc, {emitEvent: false});
+    if (x.inc !== null) {
+      this.allForm.controls.daysPer.setValue(x.inc, {emitEvent: false});
+    }
 
     // Month
     x = parseCronNumberToken(t[4])
     this.allForm.controls.months.setValue(x.val, {emitEvent: false});
-    this.allForm.controls.monthsInc.setValue(x.inc, { emitEvent: false });
+    if (x.inc !== null) {
+      this.allForm.controls.monthsInc.setValue(x.inc, { emitEvent: false });
+    }
 
     // Day of Week
     this.allForm.controls.SUN.setValue(t[5].match(/(?<!#)((SUN)|0)/) !== null, {emitEvent: false});
@@ -608,7 +621,7 @@ export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValu
       months: this.getRange(1, 12).map(String),
       monthWeeks: ['#1', '#2', '#3', '#4', '#5', 'L'],
       days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
-      minutes: this.getRange(0, 59).map(String),
+      minutes: this.getRange(1, 59).map(String), // step for 'every N minutes'; 0 is not a valid step
       fullMinutes: this.getRange(0, 59).map(String),
       seconds: this.getRange(0, 59).map(String),
       hours: this.getRange(1, 23).map(String),

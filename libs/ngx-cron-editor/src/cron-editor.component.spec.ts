@@ -91,7 +91,48 @@ describe('CronGenComponent in a form (standard flavor)', () => {
     fixture.detectChanges();
 
     expect(selectedTabLabel()).toBe('Daily');
-    expect(host.cron.value).toMatch(/^30 10 1\/\d+ \* \*$/);
+    // '15' has no step, so the Daily step stays at its default of 1 (was '1/0').
+    expect(host.cron.value).toBe('30 10 1/1 * *');
+  }));
+
+  function clickTab(label: string) {
+    const tabs: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
+    tabs.find(t => t.textContent?.trim() === label)!.click();
+    fixture.detectChanges();
+    tick(600);
+    fixture.detectChanges();
+  }
+
+  // Without a value, every tab must emit a usable expression: no step of 0,
+  // no day-of-month 0 and no month 0.
+  const defaults: [string, string][] = [
+    ['Minutely', '0/1 * 1/1 * *'],
+    ['Hourly', '0 0/1 1/1 * *'],
+    ['Daily', '0 0 1/1 * *'],
+    ['Monthly', '0 0 1 1/1 *'],
+    ['Yearly', '0 0 1 1 *'],
+  ];
+  for (const [tab, expected] of defaults) {
+    it(`emits "${expected}" from the ${tab} tab when there is no value`, fakeAsync(() => {
+      if (tab === 'Minutely') {
+        clickTab('Hourly'); // Minutely is already selected; clicking it changes nothing
+      }
+      clickTab(tab);
+      expect(host.cron.value).toBe(expected);
+    }));
+  }
+
+  it('does not offer 0 as a minute step', () => {
+    const ed = fixture.debugElement.children[0].componentInstance as CronGenComponent;
+    expect(ed.selectOptions.minutes[0]).toBe('1');
+    expect(ed.selectOptions.minutes).not.toContain('0');
+  });
+
+  it('keeps a parsed step when switching back to its tab', fakeAsync(() => {
+    load('0/15 * 1/1 * *');
+    clickTab('Hourly');
+    clickTab('Minutely');
+    expect(host.cron.value).toBe('0/15 * 1/1 * *');
   }));
 
   it('is valid for an expression with the right segment count', fakeAsync(() => {
