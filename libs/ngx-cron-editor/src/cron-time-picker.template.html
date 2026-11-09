@@ -1,40 +1,52 @@
 <ng-container [formGroup]="allForm">
 
-  <ng-container *ngIf="!hideHours">
+  @if (!hideHours) {
     <mat-form-field>
       <mat-label i18n>Hour(s)</mat-label>
       <mat-select formControlName="hours">
-        <mat-option *ngFor="let hour of hours" [value]="hour">{{hour}}</mat-option>
+        @for (hour of hours; track hour) {
+          <mat-option [value]="hour">{{hour}}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="!hideMinutes">
-    <span *ngIf="!hideHours">:</span>
+  @if (!hideMinutes) {
+    @if (!hideHours) {
+      <span>:</span>
+    }
     <mat-form-field>
       <mat-label i18n>Minute(s)</mat-label>
       <mat-select formControlName="minutes">
-        <mat-option *ngFor="let minute of minutes" [value]="minute">{{minute}}</mat-option>
+        @for (minute of minutes; track minute) {
+          <mat-option [value]="minute">{{minute}}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="!hideSeconds">
-    <span *ngIf="!hideMinutes">:</span>
+  @if (!hideSeconds) {
+    @if (!hideMinutes) {
+      <span>:</span>
+    }
     <mat-form-field>
       <mat-label i18n>Second(s)</mat-label>
       <mat-select formControlName="seconds">
-        <mat-option *ngFor="let second of seconds" [value]="second">{{second}}</mat-option>
+        @for (second of seconds; track second) {
+          <mat-option [value]="second">{{second}}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="!use24HourTime">
+  @if (!use24HourTime) {
     <span></span>.
     <mat-form-field>
       <mat-select formControlName="hourType">
-        <mat-option *ngFor="let hourType of hourTypes" [value]="hourType">{{hourType}}</mat-option>
+        @for (hourType of hourTypes; track hourType) {
+          <mat-option [value]="hourType">{{hourType}}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
-  </ng-container>
+  }
 </ng-container>

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren, QueryList} from '@angular/core';
+import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren, QueryList, ChangeDetectionStrategy} from '@angular/core';
 import {CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
@@ -45,11 +45,13 @@ function* range(start: number, end: number) {
 
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'cron-editor',
-  templateUrl: './cron-editor.template.html',
-  styleUrls: ['./cron-editor.component.scss'],
-  providers: [CRON_VALUE_ACCESSOR]
+    // eslint-disable-next-line @angular-eslint/component-selector
+    selector: 'cron-editor',
+    templateUrl: './cron-editor.template.html',
+    styleUrls: ['./cron-editor.component.scss'],
+    providers: [CRON_VALUE_ACCESSOR],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
   public tabIndex = 0;

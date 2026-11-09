@@ -1,4 +1,4 @@
-﻿import {Component, Input, OnInit} from '@angular/core';
+﻿import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ControlContainer, FormGroup} from '@angular/forms';
 
 export interface TimePickerModel {
@@ -15,9 +15,11 @@ function* range(start: number, end: number) {
 }
 
 @Component({
-  selector: 'cron-time-picker',
-  templateUrl: './cron-time-picker.template.html',
-  providers: []
+    selector: 'cron-time-picker',
+    templateUrl: './cron-time-picker.template.html',
+    providers: [],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class TimePickerComponent implements OnInit {
   @Input() public disabled = false;
