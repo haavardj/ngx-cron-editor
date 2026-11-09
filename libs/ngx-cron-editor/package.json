@@ -1,7 +1,7 @@
 {
   "description": "A cron expression generator for Angular 22",
   "name": "ngx-cron-editor",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/haavardj/ngx-cron-editor"

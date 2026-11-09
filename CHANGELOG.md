@@ -1,6 +1,34 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## [0.11.0](https://github.com/haavardj/ngx-cron-editor/compare/v0.10.2...v0.11.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* the removed CronOptions fields, the backgroundColor and
+color inputs, and the ngx-cron-editor/theming export no longer exist.
+Delete them from app code and styles.
+* **editor:** writeValue() no longer throws for an expression with the
+wrong number of segments. The control gets a cronSegments error instead.
+* requires Angular 22. Apps on Angular 15-18 should stay
+on 0.10.x.
+
+* remove unused options, inputs and the theme mixin ([b78714b](https://github.com/haavardj/ngx-cron-editor/commit/b78714b45b70ce2476fd125aea8627f3e88b518c))
+
+
+### Features
+
+* build with Angular 22 ([50da207](https://github.com/haavardj/ngx-cron-editor/commit/50da20707b0b34aa09b9877d887baae20d1e142a)), closes [#46](https://github.com/haavardj/ngx-cron-editor/issues/46)
+
+
+### Bug Fixes
+
+* **deps:** update vulnerable dev dependencies ([b566f24](https://github.com/haavardj/ngx-cron-editor/commit/b566f2458c0f0c3ee3e8017b33f905e4c81f4654))
+* **editor:** keep the Week Day radio selected for initial MON-FRI values ([2967adf](https://github.com/haavardj/ngx-cron-editor/commit/2967adf44543ce7838b97dacef64999b80003893)), closes [#35](https://github.com/haavardj/ngx-cron-editor/issues/35)
+* **editor:** mark the editor for check after recomputing ([2671b47](https://github.com/haavardj/ngx-cron-editor/commit/2671b473fae6b3bcf1bbdd23080d1bbf5dcfa8c8))
+* **editor:** report wrong segment counts as a validation error ([c5223c9](https://github.com/haavardj/ngx-cron-editor/commit/c5223c9e9e1e88c2daa08096f3fe0c7f8f9d2290))
 
 ### [0.10.2](https://github.com/haavardj/ngx-cron-editor/compare/v0.10.1...v0.10.2) (2025-11-05)
 
