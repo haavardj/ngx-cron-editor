@@ -143,7 +143,7 @@
             <span i18n>of every</span>
             <mat-form-field>
               <mat-label i18n>Month</mat-label>
-              <mat-select formControlName="monthsInc" [ngClass]="options.formSelectClass">
+              <mat-select formControlName="monthsInc">
                 @for (month of selectOptions.months; track month) {
                   <mat-option [value]="month">
                     {{month}}

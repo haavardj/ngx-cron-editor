@@ -2,7 +2,6 @@ import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren
 import {CronFlavor, CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
 import {AbstractControl, ControlValueAccessor, FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator, Validators} from '@angular/forms';
-import { ThemePalette } from '@angular/material/core';
 import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
 import {debounceTime, Subscription } from 'rxjs';
 
@@ -73,8 +72,6 @@ function* range(start: number, end: number) {
 export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValueAccessor, Validator {
   public tabIndex = 0;
 
-  @Input() public backgroundColor: ThemePalette;
-  @Input() public color: ThemePalette;
 
   @Input() public disabled = false;
   @Input() public options: CronOptions = new DefaultOptions();

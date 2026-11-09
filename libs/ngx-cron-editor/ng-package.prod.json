@@ -3,8 +3,5 @@
   "dest": "../../dist/libs/ngx-cron-editor",
   "lib": {
     "entryFile": "public_api.ts"
-  },
-  "assets": [
-    "./src/*.scss"
-  ]
+  }
 }
