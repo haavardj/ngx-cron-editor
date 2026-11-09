@@ -45,6 +45,11 @@
     <mat-card-content>
       <form [formGroup]="form">
       <cron-editor i18n #cronEditorDemo2  formControlName="expressionEditor" [options]="cronOptions">Cron here...</cron-editor>
+      @if (form.controls.expressionEditor.getError('cronSegments'); as err) {
+        <p class="demo-error" role="alert">
+          Invalid expression for the {{ err.flavor }} flavor: expected {{ err.expected.join(' or ') }} segments, got {{ err.actual }}.
+        </p>
+      }
       </form>
     </mat-card-content>
   </mat-card>

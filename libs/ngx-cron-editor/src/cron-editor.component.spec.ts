@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, discardPeriodicTasks, fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CronGenComponent } from './cron-editor.component';
@@ -94,6 +94,26 @@ describe('CronGenComponent in a form (standard flavor)', () => {
     expect(host.cron.value).toMatch(/^30 10 1\/\d+ \* \*$/);
   }));
 
+  it('is valid for an expression with the right segment count', fakeAsync(() => {
+    load('30 10 * * MON-FRI');
+    expect(host.cron.valid).toBeTrue();
+    expect(host.cron.errors).toBeNull();
+  }));
+
+  it('reports cronSegments instead of throwing for a wrong segment count', fakeAsync(() => {
+    load('0/5 * 1/1 * *');
+    expect(() => load('3 5 1 ? * MON-FRI *')).not.toThrow();
+
+    expect(host.cron.value).toBe('3 5 1 ? * MON-FRI *');
+    expect(host.cron.valid).toBeFalse();
+    expect(host.cron.getError('cronSegments')).toEqual({flavor: 'standard', expected: [5], actual: 7});
+
+    // The expression is shown in the Advanced tab so the user can correct it.
+    expect(selectedTabLabel()).toBe('Advanced');
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input.advanced-cron-editor-input');
+    expect(input.value).toBe('3 5 1 ? * MON-FRI *');
+  }));
+
   // The host is OnPush (the Angular 22 default). The editor must mark itself for
   // check when a later value changes the tab, or the tab group never sees it.
   it('switches tab for a later value inside an OnPush parent', fakeAsync(() => {
@@ -101,6 +121,18 @@ describe('CronGenComponent in a form (standard flavor)', () => {
     expect(selectedTabLabel()).toBe('Minutely');
     load('1 2 3 4 5');
     expect(selectedTabLabel()).toBe('Advanced');
+  }));
+
+  it('becomes valid again when the user corrects the expression', fakeAsync(() => {
+    load('3 5 1 ? * MON-FRI *');
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input.advanced-cron-editor-input');
+    input.value = '5 1 * * MON-FRI';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    tick(100);
+
+    expect(host.cron.value).toBe('5 1 * * MON-FRI');
+    expect(host.cron.valid).toBeTrue();
   }));
 
   it('defaults the Daily tab to "Every N day(s)" when there is no value', fakeAsync(() => {
@@ -143,5 +175,62 @@ describe('CronGenComponent with an initial value (quartz flavor)', () => {
     expect(checked.length).toBe(1);
     expect(checked[0].textContent).toContain('Week Day (MON-FRI)');
     expect(fixture.componentInstance.cron.value).toBe('3 5 1 ? * MON-FRI *');
+  }));
+
+  it('revalidates when the flavor is changed in place', fakeAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [QuartzHostComponent, NoopAnimationsModule],
+    });
+    const fixture = TestBed.createComponent(QuartzHostComponent);
+    const host = fixture.componentInstance;
+    fixture.detectChanges();
+    tick(600);
+    expect(host.cron.valid).toBeTrue();
+
+    host.options.cronFlavor = 'standard';
+    fixture.detectChanges();
+    flushMicrotasks();
+    expect(host.cron.getError('cronSegments')).toEqual({flavor: 'standard', expected: [5], actual: 7});
+
+    host.options.cronFlavor = 'quartz';
+    fixture.detectChanges();
+    flushMicrotasks();
+    expect(host.cron.valid).toBeTrue();
+    discardPeriodicTasks();
+  }));
+
+  it('does not throw for an invalid initial value', fakeAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [QuartzHostComponent, NoopAnimationsModule],
+    });
+    const fixture = TestBed.createComponent(QuartzHostComponent);
+    fixture.componentInstance.cron.setValue('1 2 3');
+    expect(() => { fixture.detectChanges(); tick(600); fixture.detectChanges(); }).not.toThrow();
+    expect(fixture.componentInstance.cron.getError('cronSegments')).toEqual({flavor: 'quartz', expected: [6, 7], actual: 3});
+  }));
+
+  it('keeps the current tab when the Advanced tab is hidden', fakeAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [QuartzHostComponent, NoopAnimationsModule],
+    });
+    const fixture = TestBed.createComponent(QuartzHostComponent);
+    const host = fixture.componentInstance;
+    host.options = {...host.options, hideAdvancedTab: true};
+    // Let the initial render, its tab change and the resulting recompute finish.
+    for (let i = 0; i < 2; i++) {
+      fixture.detectChanges();
+      tick(600);
+    }
+    fixture.detectChanges();
+
+    host.cron.setValue('1 2 3');
+    fixture.detectChanges();
+    tick(600);
+    fixture.detectChanges();
+
+    const tab: HTMLElement = fixture.nativeElement.querySelector('[role="tab"][aria-selected="true"]');
+    expect(tab.textContent?.trim()).toBe('Daily');
+    expect(host.cron.value).toBe('1 2 3');
+    expect(host.cron.hasError('cronSegments')).toBeTrue();
   }));
 });

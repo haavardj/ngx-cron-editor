@@ -89,6 +89,28 @@ export class MyComponent {
 }
 ```
 
+## Validation
+
+The editor is also a validator for its form control. An expression with the wrong
+number of segments for the configured `cronFlavor` (5 for `standard`, 6 or 7 for
+`quartz`) makes the control invalid with a `cronSegments` error:
+
+```ts
+const err = this.cronForm.getError('cronSegments');
+// { flavor: 'standard', expected: [5], actual: 7 }
+```
+
+```html
+@if (cronForm.getError('cronSegments'); as err) {
+  <p role="alert">Expected {{ err.expected.join(' or ') }} segments, got {{ err.actual }}.</p>
+}
+```
+
+The editor shows such an expression in the Advanced tab so the user can correct
+it. If the Advanced tab is hidden, the editor keeps its current state. The control
+is revalidated when `cronFlavor` changes. An empty value is valid; add
+`Validators.required` to reject it.
+
 ## History
 
 The ngx-cron-editor is a fork of the vincentjames501's [angular-cron-gen](https://github.com/vincentjames501/angular-cron-gen) for AngularJS 1.5+ and claudiuconstantin's [cron-editor(https://github.com/claudiuconstantin/cron-editor)]. 

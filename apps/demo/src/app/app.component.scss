@@ -11,3 +11,7 @@
 .demo-container mat-card mat-card-header{
   margin-bottom: 8px;
 }
+
+.demo-error {
+  color: var(--mat-sys-error, #ba1a1a);
+}

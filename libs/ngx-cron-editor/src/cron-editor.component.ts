@@ -1,7 +1,7 @@
-import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, inject} from '@angular/core';
-import {CronOptions, DefaultOptions} from './CronOptions';
+import {Component, Input, OnInit, forwardRef, ViewChild, OnDestroy, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, DoCheck, Provider, inject} from '@angular/core';
+import {CronFlavor, CronOptions, DefaultOptions} from './CronOptions';
 import { Days, MonthWeeks, Months } from './enums';
-import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {AbstractControl, ControlValueAccessor, FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator, Validators} from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
 import {MatTab, MatTabChangeEvent} from '@angular/material/tabs';
 import {debounceTime, Subscription } from 'rxjs';
@@ -23,6 +23,23 @@ export const CRON_VALUE_ACCESSOR: any = {
   useExisting: forwardRef(() => CronGenComponent),
   multi: true,
 };
+
+export const CRON_VALIDATOR: Provider = {
+  provide: NG_VALIDATORS,
+  useExisting: forwardRef(() => CronGenComponent),
+  multi: true,
+};
+
+/**
+ * Validation error reported on the form control when an expression has the wrong
+ * number of segments for the configured cron flavor. Read it with
+ * `control.getError('cronSegments')`.
+ */
+export interface CronSegmentsError {
+  flavor: CronFlavor;
+  expected: number[];
+  actual: number;
+}
 
 interface CronToken {
   val: string;
@@ -49,11 +66,11 @@ function* range(start: number, end: number) {
     selector: 'cron-editor',
     templateUrl: './cron-editor.template.html',
     styleUrls: ['./cron-editor.component.scss'],
-    providers: [CRON_VALUE_ACCESSOR],
+    providers: [CRON_VALUE_ACCESSOR, CRON_VALIDATOR],
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class CronGenComponent implements OnInit, DoCheck, OnDestroy, ControlValueAccessor, Validator {
   public tabIndex = 0;
 
   @Input() public backgroundColor: ThemePalette;
@@ -130,6 +147,12 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   public onChange: (value) => void
   public onTouched: () => void;
 
+  /*
+   * Validator
+   */
+  private onValidatorChange?: () => void;
+  private lastFlavor: CronFlavor | undefined;
+
 
   get isCronFlavorQuartz() {
     return this.options.cronFlavor === 'quartz';
@@ -204,6 +227,21 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
       // an OnPush parent (the Angular 22 default) never re-checks the editor.
       this.cdr.markForCheck();
     });
+  }
+
+  /* Revalidate when the cron flavor changes. Apps may replace `options` or mutate
+   * `options.cronFlavor` in place, so an input setter or ngOnChanges would miss the
+   * second case. The revalidation runs after change detection so that it does not
+   * change the parent form's status in the middle of a check. */
+  ngDoCheck() {
+    const flavor = this.options?.cronFlavor;
+    if (flavor !== this.lastFlavor) {
+      const first = this.lastFlavor === undefined;
+      this.lastFlavor = flavor;
+      if (!first) {
+        Promise.resolve().then(() => this.onValidatorChange?.());
+      }
+    }
   }
 
   ngOnDestroy() {
@@ -380,13 +418,16 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
   private handleModelChange(cron: string) {
 
     if (!this.cronIsValid(cron)) {
-      if (this.isCronFlavorQuartz) {
-        throw new Error($localize`Invalid cron expression, there must be 6 or 7 segments`);
+      // Wrong segment count for the flavor: don't parse it. validate() reports the
+      // error on the form control. Show the expression in the Advanced tab, if there
+      // is one, so the user can see and correct it.
+      if (this.options.hideAdvancedTab) {
+        this.allForm.controls.expression.setValue(cron, {emitEvent: false});
+        return;
       }
-
-      if (this.isCronFlavorStandard) {
-        throw new Error($localize`Invalid cron expression, there must be 5 segments`);
-      }
+      this.allForm.controls.cronType.setValue('unknown', {emitEvent: false});
+      this.allForm.controls.expression.setValue(cron);
+      return;
     }
 
     // Store original cron expression here.
@@ -532,6 +573,10 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
     return false;
   }
 
+  private expectedSegments(): number[] {
+    return this.isCronFlavorQuartz ? [6, 7] : [5];
+  }
+
 
   private getOrdinalSuffix(v: string | number): string {
 
@@ -586,11 +631,29 @@ export class CronGenComponent implements OnInit, OnDestroy, ControlValueAccessor
 
 
   writeValue(obj: string | null): void {
-    if (obj === null) {
+    // An empty value leaves the editor as it is; use Validators.required to reject it.
+    if (obj === null || obj === undefined || obj === '') {
       return
     }
 
     this.handleModelChange(obj);
+  }
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (value === null || value === undefined || value === '' || this.cronIsValid(value)) {
+      return null;
+    }
+    const error: CronSegmentsError = {
+      flavor: this.options.cronFlavor,
+      expected: this.expectedSegments(),
+      actual: String(value).split(' ').length,
+    };
+    return {cronSegments: error};
+  }
+
+  registerOnValidatorChange(fn: () => void): void {
+    this.onValidatorChange = fn;
   }
 
   registerOnChange(fn: any): void {
